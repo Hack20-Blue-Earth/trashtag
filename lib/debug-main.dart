@@ -57,7 +57,7 @@ class DebugScreenPicker extends StatelessWidget {
             child: Text("Image View update"),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (c) => WastePhotoScreenTest(false),
+                builder: (c) => WastePhotoScreenTest(isNew: false),
               ),
             ),
           ),
@@ -97,10 +97,11 @@ class WastePinTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      onPressed: (){
-        Navigator.of(context).push(MaterialPageRoute(builder: (c)=> WastePhotoScreenTest() ));
+      onPressed: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (c) => WastePhotoScreenTest(preloadPin: wastePin)));
       },
-          child: ListTile(
+      child: ListTile(
         title: Text("Loc: ${wastePin.location?.toString() ?? 'Unknown'}"),
         subtitle: Text(wastePin.note),
         leading: SizedBox(

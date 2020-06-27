@@ -9,15 +9,18 @@ import 'package:trashtag/data/wastepin.dart';
 import '../debug-main.dart';
 
 class WastePhotoScreenTest extends StatelessWidget {
-  final bool isNewPhotoPicker;
+  final bool isNew;
+  final WastePin preloadPin;
 
-  WastePhotoScreenTest([this.isNewPhotoPicker = true]);
+  WastePhotoScreenTest({this.isNew = true, this.preloadPin});
 
   @override
   Widget build(BuildContext context) {
     WastePin wastePin;
-    if (!isNewPhotoPicker) {
+    if (!isNew) {
       wastePin = wastePinService.fetch().random();
+    } else {
+      wastePin = preloadPin;
     }
     return Material(
       child: SafeArea(

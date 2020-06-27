@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:trashtag/photo/camera_screen.dart';
@@ -22,11 +24,10 @@ class DebugApp extends StatelessWidget {
 }
 
 class DebugScreenPicker extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-          child: Column(
+      child: Column(
         children: [
           RaisedButton(
             child: Text("Photo preview Screen"),
@@ -56,12 +57,18 @@ class DebugScreenPicker extends StatelessWidget {
             child: Text("Image View update"),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (c) => WastePhotoScreenTest(),
+                builder: (c) => WastePhotoScreenTest(false),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+extension RandomList on List<WastePin> {
+  WastePin random() {
+    return this[Random().nextInt(this.length)];
   }
 }

@@ -9,8 +9,16 @@ import 'package:trashtag/data/wastepin.dart';
 import '../debug-main.dart';
 
 class WastePhotoScreenTest extends StatelessWidget {
+  final bool isNewPhotoPicker;
+
+  WastePhotoScreenTest([this.isNewPhotoPicker = true]);
+
   @override
   Widget build(BuildContext context) {
+    WastePin wastePin;
+    if (!isNewPhotoPicker) {
+      wastePin = wastePinService.fetch().random();
+    }
     return Material(
       child: SafeArea(
         child: Column(
@@ -26,8 +34,7 @@ class WastePhotoScreenTest extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    child: WastePhotoPicker(
-                        wastePin: wastePinService.fetch().first))),
+                    child: WastePhotoPicker(wastePin: wastePin))),
           ],
         ),
       ),
@@ -39,7 +46,10 @@ class WastePhotoScreenTest extends StatelessWidget {
 class WastePhotoPicker extends StatefulWidget {
   final WastePin wastePin;
 
-  const WastePhotoPicker({Key key, this.wastePin}) : super(key: key);
+  final bool downloadAvailable;
+  const WastePhotoPicker(
+      {Key key, this.wastePin, this.downloadAvailable = false})
+      : super(key: key);
 
   @override
   _WastePhotoPickerState createState() => _WastePhotoPickerState();
@@ -113,7 +123,7 @@ class _WastePhotoPickerState extends State<WastePhotoPicker> {
                     : (Image.file(_image)),
           ),
         ),
-        isNetworkImage
+        (isNetworkImage && widget.downloadAvailable)
             ? Positioned(
                 top: 16,
                 right: 16,

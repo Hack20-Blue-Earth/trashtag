@@ -147,32 +147,64 @@ class _WastePhotoState extends State<WastePhoto> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                (!isLocalImage)
-                    ? SizedBox(
-                        width: 0,
-                        height: 0,
-                      )
-                    : RaisedButton(
-                        onPressed: removeImage,
+                Visibility(
+                  visible: isLocalImage,
+                  child: Container(
+                    width: 56,
+                    height: 56,
+                    child: MaterialButton(
+                      shape: CircleBorder(
+                          side: BorderSide(
+                              width: 0,
+                              color: Colors.red,
+                              style: BorderStyle.solid)),
+                      child: Center(
                         child: Icon(
                           Icons.delete_forever,
                           semanticLabel: "Remove Image",
                         ),
                       ),
-                SizedBox(width: 16),
-                RaisedButton(
-                  onPressed: getFromGallery,
-                  child: Icon(
-                    Icons.photo_library,
-                    semanticLabel: 'Pick Image',
+                      color: Colors.yellow,
+                      onPressed: getFromGallery,
+                    ),
                   ),
                 ),
                 SizedBox(width: 16),
-                FlatButton(
-                  onPressed: getFromCamera,
-                  child: Icon(
-                    Icons.add_a_photo,
-                    semanticLabel: 'Snap photo',
+                Container(
+                  width: 56,
+                  height: 56,
+                  child: MaterialButton(
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 0,
+                            color: Colors.red,
+                            style: BorderStyle.solid)),
+                    child: Center(
+                      child: Icon(
+                        Icons.photo_library,
+                        semanticLabel: 'Pick Image',
+                      ),
+                    ),
+                    color: Colors.yellow,
+                    onPressed: getFromGallery,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Container(
+                  width: 56,
+                  height: 56,
+                  child: MaterialButton(
+                    shape: CircleBorder(
+                        side: BorderSide(
+                            width: 0,
+                            color: Colors.red,
+                            style: BorderStyle.solid)),
+                    child: Icon(
+                      Icons.add_a_photo,
+                      semanticLabel: 'Snap photo',
+                    ),
+                    color: Colors.yellow,
+                    onPressed: getFromCamera,
                   ),
                 ),
               ],

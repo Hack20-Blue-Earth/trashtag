@@ -12,14 +12,7 @@ WastePinService wastePinService = WastePinService();
 class DebugApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Test Debug Screen',
-      theme: ThemeData(
-        primarySwatch: Colors.yellow,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: DebugScreenPicker(),
-    );
+    return DebugScreenPicker();
   }
 }
 

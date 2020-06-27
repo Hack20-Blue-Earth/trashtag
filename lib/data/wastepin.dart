@@ -59,6 +59,6 @@ class Location {
     return {
       "longitude":longitude,
       "latitude":latitude
-    }
+    };
   }
 }

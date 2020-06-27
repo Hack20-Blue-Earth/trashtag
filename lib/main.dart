@@ -4,7 +4,7 @@ import 'package:flutter_fimber/flutter_fimber.dart';
 import 'debug-main.dart';
 
 void main() {
-  Fimber.plantTree(FimberTree());
+  Fimber.plantTree(DebugTree());
   Fimber.i("Starting application");
   runApp(DebugApp());
 }

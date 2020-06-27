@@ -10,8 +10,11 @@ import 'package:trashtag/waste_pin_detail.dart';
 WastePinService wastePinService = WastePinService();
 
 class DebugApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+
+    
     return MaterialApp(
       title: 'Test Debug Screen',
       theme: ThemeData(

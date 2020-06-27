@@ -29,6 +29,9 @@ dependencies:
   camera: ^0.5.8
   sensors: ^0.4.2
   flutter_compass: ^0.4.2
+
+  firebase:
+  cloud_firestore: ^0.13.7
   
     
 

@@ -41,5 +41,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Application allows to pick pictures to be uploaded to Waste Pin map</string>
+	<key>NSCameraUsageDescription</key>
+	<string>WasteBin needs camera to take pictures of the waste.</string>
 </dict>
 </plist>

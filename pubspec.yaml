@@ -25,6 +25,10 @@ dependencies:
     sdk: flutter
   flutter_fimber: ^0.4.2
   uuid:
+  image_picker: ^0.6.7
+  camera: ^0.5.8
+  sensors: ^0.4.2
+  flutter_compass: ^0.4.2
   
     
 

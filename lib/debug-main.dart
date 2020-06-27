@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
-import 'package:trashtag/camera/camera_screen.dart';
+import 'package:trashtag/photo/camera_screen.dart';
 import 'package:trashtag/data/wastepin.dart';
+import 'package:trashtag/photo/photo_screen.dart';
 import 'package:trashtag/waste_pin_detail.dart';
-
-void main() {
-  Fimber.plantTree(FimberTree());
-  Fimber.i("Starting application");
-  runApp(DebugApp());
-}
 
 WastePinService wastePinService = WastePinService();
 
@@ -27,28 +22,46 @@ class DebugApp extends StatelessWidget {
 }
 
 class DebugScreenPicker extends StatelessWidget {
-  var 
+  
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        RaisedButton(
-          child: Text("Photo preview Screen"),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (c) => WastePinDetail(wastePinService.fetch().first),
+    return SafeArea(
+          child: Column(
+        children: [
+          RaisedButton(
+            child: Text("Photo preview Screen"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => WastePinDetail(wastePinService.fetch().first),
+              ),
             ),
           ),
-        ),
-        RaisedButton(
-          child: Text("Camera Screen"),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (c) => CameraScreen(),
+          RaisedButton(
+            child: Text("Camera Screen"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => CameraScreen(),
+              ),
             ),
           ),
-        ),
-      ],
+          RaisedButton(
+            child: Text("Image View new picker"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => WastePhotoScreenTest(),
+              ),
+            ),
+          ),
+          RaisedButton(
+            child: Text("Image View update"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => WastePhotoScreenTest(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

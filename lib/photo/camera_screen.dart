@@ -1,7 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CameraScreen extends StatelessWidget {
+// Camera screen to take a photo and assing location bearing sensor data for the Wastepin
+class CameraScreen extends StatefulWidget {
+  @override
+  _CameraScreenState createState() => _CameraScreenState();
+}
+
+class _CameraScreenState extends State<CameraScreen> {
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(

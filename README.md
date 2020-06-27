@@ -24,6 +24,10 @@ Marking a garbage location
 
 Pinning on map a waste site.
 
-#
+### Remov
+
+### Wasts
+
+### Cleanomic or cleanz
 
 

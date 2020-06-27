@@ -61,7 +61,56 @@ class DebugScreenPicker extends StatelessWidget {
               ),
             ),
           ),
+          RaisedButton(
+            child: Text("Waste Gallery"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => WasteGallery(),
+              ),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class WasteGallery extends StatelessWidget {
+  final wastePinList = wastePinService.fetch();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ListView.builder(
+        itemBuilder: (ctx, i) => WastePinTile(wastePin: wastePinList[i]),
+        itemCount: wastePinList.length,
+      ),
+    );
+  }
+}
+
+class WastePinTile extends StatelessWidget {
+  final WastePin wastePin;
+
+  WastePinTile({Key key, this.wastePin}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: (){
+        Navigator.of(context).push(MaterialPageRoute(builder: (c)=> WastePhotoScreenTest() ));
+      },
+          child: ListTile(
+        title: Text("Loc: ${wastePin.location?.toString() ?? 'Unknown'}"),
+        subtitle: Text(wastePin.note),
+        leading: SizedBox(
+          width: 100,
+          height: 100,
+          child: WastePhoto(
+            wastePin: wastePin,
+            disableActions: true,
+          ),
+        ),
       ),
     );
   }

@@ -34,7 +34,7 @@ class WastePhotoScreenTest extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    child: WastePhotoPicker(wastePin: wastePin))),
+                    child: WastePhoto(wastePin: wastePin))),
           ],
         ),
       ),
@@ -43,19 +43,23 @@ class WastePhotoScreenTest extends StatelessWidget {
 }
 
 // Screen to pick image from galerry and review photo (cropping pan zoom, optinally added later)
-class WastePhotoPicker extends StatefulWidget {
+class WastePhoto extends StatefulWidget {
   final WastePin wastePin;
+  final bool disableActions;
 
   final bool downloadAvailable;
-  const WastePhotoPicker(
-      {Key key, this.wastePin, this.downloadAvailable = false})
+  const WastePhoto(
+      {Key key,
+      this.wastePin,
+      this.downloadAvailable = false,
+      this.disableActions = false})
       : super(key: key);
 
   @override
-  _WastePhotoPickerState createState() => _WastePhotoPickerState();
+  _WastePhotoState createState() => _WastePhotoState();
 }
 
-class _WastePhotoPickerState extends State<WastePhotoPicker> {
+class _WastePhotoState extends State<WastePhoto> {
   File _image;
   final picker = ImagePicker();
 
@@ -123,49 +127,56 @@ class _WastePhotoPickerState extends State<WastePhotoPicker> {
                     : (Image.file(_image)),
           ),
         ),
-        (isNetworkImage && widget.downloadAvailable)
-            ? Positioned(
-                top: 16,
-                right: 16,
-                child: FlatButton.icon(
-                  label: Text("Download locally"),
-                  onPressed: downloadImage,
-                  icon: Icon(Icons.file_download),
+        Visibility(
+          child: Positioned(
+            top: 16,
+            right: 16,
+            child: FlatButton.icon(
+              label: Text("Download locally"),
+              onPressed: downloadImage,
+              icon: Icon(Icons.file_download),
+            ),
+          ),
+          visible: (isNetworkImage && widget.downloadAvailable),
+        ),
+        Visibility(
+          visible: !widget.disableActions,
+          child: Positioned(
+            bottom: 16,
+            right: 16,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                (!isLocalImage)
+                    ? SizedBox(
+                        width: 0,
+                        height: 0,
+                      )
+                    : RaisedButton(
+                        onPressed: removeImage,
+                        child: Icon(
+                          Icons.delete_forever,
+                          semanticLabel: "Remove Image",
+                        ),
+                      ),
+                SizedBox(width: 16),
+                RaisedButton(
+                  onPressed: getFromGallery,
+                  child: Icon(
+                    Icons.photo_library,
+                    semanticLabel: 'Pick Image',
+                  ),
                 ),
-              )
-            : SizedBox(width: 0, height: 0),
-        Positioned(
-          bottom: 16,
-          right: 16,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              (!isLocalImage)
-                  ? SizedBox(
-                      width: 0,
-                      height: 0,
-                    )
-                  : FloatingActionButton(
-                      onPressed: removeImage,
-                      heroTag: "FAB-remove",
-                      tooltip: 'Clear image',
-                      child: Icon(Icons.delete_forever),
-                    ),
-              SizedBox(width: 16),
-              FloatingActionButton(
-                heroTag: "FAB-pick",
-                onPressed: getFromGallery,
-                tooltip: 'Pick Image',
-                child: Icon(Icons.photo_library),
-              ),
-              SizedBox(width: 16),
-              FloatingActionButton(
-                heroTag: "FAB-fcamera",
-                onPressed: getFromCamera,
-                tooltip: 'Snap Photo',
-                child: Icon(Icons.add_a_photo),
-              ),
-            ],
+                SizedBox(width: 16),
+                FlatButton(
+                  onPressed: getFromCamera,
+                  child: Icon(
+                    Icons.add_a_photo,
+                    semanticLabel: 'Snap photo',
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

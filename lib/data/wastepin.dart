@@ -13,6 +13,7 @@ var wildWastePhotos=[
   'https://image.shutterstock.com/image-photo/illegal-garbage-thrown-out-forest-260nw-1664704984.jpg',
   'https://image.shutterstock.com/image-photo/transcarpathia-ukraine-august-8-2016-600w-468544031.jpg'
 ];
+
 class WastePinService {
   List<WastePin> _inMemoryList;
 
@@ -70,7 +71,7 @@ class Location {
 
   @override
   String toString() {
-    return "Geo(${longitude.toStringAsFixed(3)}, ${latitude.toStringAsFixed(3)}";
+    return "Geo(${longitude.toStringAsFixed(3)}, ${latitude.toStringAsFixed(3)});";
   }
 
   Map<String, double> toMap() {

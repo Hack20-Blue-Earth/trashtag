@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "211876462098",
+    "firebase_url": "https://hack20-wastepin.firebaseio.com",
+    "project_id": "hack20-wastepin",
+    "storage_bucket": "hack20-wastepin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211876462098:android:fc406388cea3e19745a2cb",
+        "android_client_info": {
+          "package_name": "com.blueearth.wastepin.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "211876462098-1tkvfv9cmr849tqfe78kmlapp7lrrrpt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.blueearth.wastepin.app",
+            "certificate_hash": "c7e1f51a6fedf5903f5c1be8e01065885c79df2c"
+          }
+        },
+        {
+          "client_id": "211876462098-bpvkon2tlb3pe665k1t1tkpqv5rbpttp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoeTQjTqiBpIkLzDRsBJ9e7h-tBgZb50A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "211876462098-bpvkon2tlb3pe665k1t1tkpqv5rbpttp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

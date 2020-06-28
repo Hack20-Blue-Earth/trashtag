@@ -6,31 +6,30 @@ import 'package:flutter/material.dart';
 
 
 final ThemeData myCustomTheme = new ThemeData(
-  primaryColor: CustomTheme.colorPrimary,
-  backgroundColor: CustomTheme.colorWhite,
+  primaryColor: MyCustomTheme.colorPrimary,
+  backgroundColor: MyCustomTheme.colorWhite,
 
-  scaffoldBackgroundColor: CustomTheme.colorWhite,
-  cursorColor: CustomTheme.colorBotton,
+  scaffoldBackgroundColor: MyCustomTheme.colorWhite,
+  cursorColor: MyCustomTheme.colorAccent,
   visualDensity: VisualDensity.adaptivePlatformDensity,
   appBarTheme: AppBarTheme(
-    color: CustomTheme.colorGradientTop
+    color: MyCustomTheme.colorWhite
   ),
 
-  accentColor: CustomTheme.colorGradientBottom,
+  accentColor: MyCustomTheme.colorAccent,
 );
 
 
 
-class CustomTheme {
+class MyCustomTheme {
 
 
-  static const Color colorPrimary = Color(0xFF25282B);
-  static const Color colorWhite = Colors.white;
+  static const Color colorPrimary = Color(0xFF1A2151);
+  static const Color colorAccent = Color(0x118352FD);
+  static const Color colorAccentDark = Color(0xFF8352FD);
   static const Color colorGreyText = Color(0xFF52575C);
   static const Color colorGreyBackground = Color(0xFFE8E8E8);
-  static const Color colorGradientTop =  Color(0xFFaa91be);
-  static const Color colorBotton =  Color(0xFFac7c94);
-  static const Color colorGradientBottom =  Color(0xFFf7d8c7);
+  static const Color colorWhite =  Color(0xFFFFFFFF);
 
 
   static const Map<int, Color> GREY = const <int, Color>{
@@ -53,4 +52,8 @@ class CustomTheme {
 
 
 
+}
+
+class Test{
+  static const Color colorPrimary = Color(0xFF1A2151);
 }

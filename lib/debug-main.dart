@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
+import 'package:wastepin/issue_screen.dart';
 import 'package:wastepin/map_view/map_view.dart';
 import 'package:wastepin/photo/camera_screen.dart';
 import 'package:wastepin/data/wastepin.dart';
@@ -13,7 +14,7 @@ WastePinService wastePinService = WastePinService();
 class DebugApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DebugScreenPicker();
+    return IssueScreen();
   }
 }
 

@@ -12,7 +12,7 @@ class _OnBoardingState extends State<OnBoarding> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomTheme.backgroundColor,
+      backgroundColor: MyCustomTheme.backgroundColor,
       body: Stack(
         children: [
           PageView(
@@ -92,7 +92,7 @@ class Indicator extends StatelessWidget {
       margin: EdgeInsets.only(right: isLast ? 0 : 8),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: CustomTheme.neutralDarkColor,
+        color: MyCustomTheme.neutralDarkColor,
       ),
     );
   }
@@ -118,8 +118,8 @@ class StartButton extends StatelessWidget {
                     fontSize: 17,
                   ),
                 ),
-                color: CustomTheme.primaryColor,
-                textColor: CustomTheme.backgroundColor,
+                color: MyCustomTheme.primaryColor,
+                textColor: MyCustomTheme.backgroundColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

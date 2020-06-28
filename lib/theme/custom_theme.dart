@@ -23,6 +23,12 @@ final ThemeData myCustomTheme = new ThemeData(
 
 class CustomTheme {
 
+  //Theme colors from figma file
+  static const Color backgroundColor = Color(0xffF2F6FF);
+  static const Color primaryColor = Color(0xff8352FD);
+  static const Color neutralDarkColor = Color(0xff1A2151); //Used in text
+
+
 
   static const Color colorPrimary = Color(0xFF25282B);
   static const Color colorWhite = Colors.white;

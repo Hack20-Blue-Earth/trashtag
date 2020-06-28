@@ -31,6 +31,7 @@ dependencies:
   flutter_compass: ^0.4.2
 
   firebase:
+  geolocator: ^5.3.2
   cloud_firestore: ^0.13.7
   
     

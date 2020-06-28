@@ -16,7 +16,7 @@ WastePinService wastePinService = WastePinService();
 class DebugApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return IssueScreen();
+    return DebugScreenPicker();
   }
 }
 

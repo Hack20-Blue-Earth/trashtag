@@ -27,7 +27,7 @@ class DebugScreenPicker extends StatelessWidget {
             child: Text("Photo preview Screen"),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (c) => WastePinDetail(wastePinService.fetch().first),
+                builder: (c) => WastePinDetail(wastePinService.inMemoryList.first),
               ),
             ),
           ),
@@ -78,7 +78,7 @@ class DebugScreenPicker extends StatelessWidget {
 }
 
 class WasteGallery extends StatelessWidget {
-  final wastePinList = wastePinService.fetch();
+  final wastePinList = wastePinService.inMemoryList;
 
   @override
   Widget build(BuildContext context) {

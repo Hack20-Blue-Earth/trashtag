@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
@@ -11,6 +12,8 @@ import 'splash_screen.dart';
 import 'data/wastepin.dart';
 import 'debug-main.dart';
 import 'map_view/map_view.dart';
+
+final firestoreInstance = Firestore.instance;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +41,7 @@ class WasteBinApp extends StatelessWidget {
     return MaterialApp(
       title: "Waste Bin",
       theme: config.themeData,
-      home: MapView(),
+      home: MapScreen(),
     );
   }
 }

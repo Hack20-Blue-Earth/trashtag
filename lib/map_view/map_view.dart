@@ -67,7 +67,7 @@ class _MapViewState extends State<MapView> {
             var wastePin = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (c) => AddWastePinScreen(),
+                builder: (c) => AddWastePinScreen(Location(newPinLocation.longitude,newPinLocation.latitude)),
               ),
             );
             Fimber.i("Added pin: $wastePin");

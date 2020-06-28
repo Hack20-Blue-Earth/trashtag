@@ -44,7 +44,9 @@ class WastePinService {
     return list;
   }
 
-  void addWastePin(WastePin pin) {
+  Future<void> addWastePin(WastePin pin, ) async {
+    await firestoreInstance.collection('wastepins').add(pin.toJson());
+
     inMemoryList.add(pin);
   }
 
@@ -91,12 +93,29 @@ class WastePin {
         location: Location.fromMap(data['location']),
         remoteUrl: data['remoteUrl']);
   }
+
+  factory WastePin.fromJson(Map<String, dynamic> json) => WastePin(
+    id: json["id"] == null ? null : json["id"],
+    location: json["location"] == null ? null : Location.fromJson(json["location"]),
+    note: json["note"] == null ? null : json["note"],
+    category: json["category"] == null ? null : json["category"],
+    remoteUrl: json["remoteUrl"] == null ? null : json["remoteUrl"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id == null ? null : id,
+    "location": location == null ? null : location.toJson(),
+    "note": note == null ? null : note,
+    "category": category == null ? null : category,
+    "remoteUrl": remoteUrl == null ? null : remoteUrl,
+  };
 }
 
 class Location {
   double longitude;
   double latitude;
   Location(this.longitude, this.latitude);
+
 
   @override
   String toString() {
@@ -122,4 +141,14 @@ class Location {
       return Location(0, 0);
     }
   }
+
+  factory Location.fromJson(Map<String, dynamic> json) => Location(
+    json["longitude"] == null ? null : json["longitude"].toDouble(),
+    json["latitude"] == null ? null : json["latitude"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "longitude": longitude == null ? null : longitude,
+    "latitude": latitude == null ? null : latitude,
+  };
 }

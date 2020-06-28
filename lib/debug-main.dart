@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
+import 'package:trashtag/map_view/map_view.dart';
 import 'package:trashtag/photo/camera_screen.dart';
 import 'package:trashtag/data/wastepin.dart';
 import 'package:trashtag/photo/photo_screen.dart';
@@ -59,6 +60,14 @@ class DebugScreenPicker extends StatelessWidget {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => WasteGallery(),
+              ),
+            ),
+          ),
+           RaisedButton(
+            child: Text("Map View"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => MapView(),
               ),
             ),
           ),

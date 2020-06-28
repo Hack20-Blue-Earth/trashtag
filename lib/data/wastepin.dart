@@ -1,8 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import "package:uuid/uuid.dart";
 import '../main.dart';
+
+import 'package:image/image.dart' as ImageCoding;
 
 var wildWastePhotos = [
   'https://thedailynews.cc/wp-content/uploads/2017/09/loc-0928-ew-park-trash-3.jpg',
@@ -39,15 +45,50 @@ class WastePinService {
   Future<List<WastePin>> fetchNearby(Location location) async {
     Fimber.d("Loading data from Firestore.");
     var snap = await firestoreInstance.collection('wastepins').getDocuments();
-    var list = snap.documents.map((e) => WastePin.fromMap(e.data)).toList();
+    var list = snap.documents.map((e) => WastePin.fromJson(e.data)).toList();
     Fimber.d("Loaded ${list.length} WastePins");
     return list;
   }
 
-  Future<void> addWastePin(WastePin pin, ) async {
-    await firestoreInstance.collection('wastepins').add(pin.toJson());
+  Future<String> uploadPhoto(WastePin pin) async {
+    // todo upload
+    StorageReference storageReference =
+        FirebaseStorage(storageBucket: 'gs://hack20-wastepin.appspot.com')
+            .ref()
+            .child("${pin.id}");
 
-    inMemoryList.add(pin);
+    Fimber.d("About up upload file: ${storageReference.path}");
+    ImageCoding.Image _image =
+        ImageCoding.decodeImage(File(pin.localFilePath).readAsBytesSync());
+    // ImageCoding.Image _thumbnail = ImageCoding.copyResize(_image, width: 640);
+    _image = ImageCoding.copyResize(_image, width: 1360);
+
+    var _uploadTask =
+        storageReference.putData(ImageCoding.encodeJpg(_image, quality: 80));
+
+    await _uploadTask.onComplete;
+
+    String downloadUrl = await _uploadTask.lastSnapshot.ref.getDownloadURL();
+    Fimber.d("Image uploaded : url=> $downloadUrl");
+
+    pin.remoteUrl = downloadUrl;
+    return downloadUrl;
+  }
+
+  Future<void> addWastePin(
+    WastePin pin,
+  ) async {
+    Fimber.i('Adding waste pin. :$pin');
+    if (pin.localFilePath != null && pin.remoteUrl == null) {
+      // upload pin photo
+      var remoteUrl = await uploadPhoto(pin);
+      pin.remoteUrl = remoteUrl;
+    }
+
+    var docRef= await firestoreInstance.collection('wastepins').add(pin.toJson());
+    var createdPin = WastePin.fromJson((await docRef.get()).data);
+    inMemoryList.add(createdPin);
+    return createdPin;
   }
 
   void updateWastePin(WastePin pin) {
@@ -85,37 +126,34 @@ class WastePin {
     }
   }
 
-  factory WastePin.fromMap(Map<String, Object> data) {
-    return WastePin(
-        id: data['id'],
-        note: data['note'],
-        category: data['category'],
-        location: Location.fromMap(data['location']),
-        remoteUrl: data['remoteUrl']);
-  }
-
   factory WastePin.fromJson(Map<String, dynamic> json) => WastePin(
-    id: json["id"] == null ? null : json["id"],
-    location: json["location"] == null ? null : Location.fromJson(json["location"]),
-    note: json["note"] == null ? null : json["note"],
-    category: json["category"] == null ? null : json["category"],
-    remoteUrl: json["remoteUrl"] == null ? null : json["remoteUrl"],
-  );
+        id: json["id"] == null ? null : json["id"],
+        location: json["location"] == null
+            ? null
+            : Location.fromJson(json["location"]),
+        note: json["note"] == null ? null : json["note"],
+        category: json["category"] == null ? null : json["category"],
+        remoteUrl: json["remoteUrl"] == null ? null : json["remoteUrl"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "location": location == null ? null : location.toJson(),
-    "note": note == null ? null : note,
-    "category": category == null ? null : category,
-    "remoteUrl": remoteUrl == null ? null : remoteUrl,
-  };
+        "id": id == null ? null : id,
+        "location": location == null ? null : location.toJson(),
+        "note": note == null ? null : note,
+        "category": category == null ? null : category,
+        "remoteUrl": remoteUrl == null ? null : remoteUrl,
+      };
+
+  @override
+  String toString() {
+    return "WastePin: $id, loc:$location, $note, url:$remoteUrl";
+  }
 }
 
 class Location {
   double longitude;
   double latitude;
   Location(this.longitude, this.latitude);
-
 
   @override
   String toString() {
@@ -143,12 +181,12 @@ class Location {
   }
 
   factory Location.fromJson(Map<String, dynamic> json) => Location(
-    json["longitude"] == null ? null : json["longitude"].toDouble(),
-    json["latitude"] == null ? null : json["latitude"],
-  );
+        json["longitude"] == null ? null : json["longitude"].toDouble(),
+        json["latitude"] == null ? null : json["latitude"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "longitude": longitude == null ? null : longitude,
-    "latitude": latitude == null ? null : latitude,
-  };
+        "longitude": longitude == null ? null : longitude,
+        "latitude": latitude == null ? null : latitude,
+      };
 }

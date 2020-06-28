@@ -2,16 +2,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wastepin/photo/photo_screen.dart';
+import 'package:wastepin/splash_screen.dart';
 
+import 'custom_widgets/info_alert_dialog.dart';
 import 'data/wastepin.dart';
 
-class AddWastePinScreen extends StatelessWidget {
-
+class AddWastePinScreen extends StatefulWidget {
   Location _location;
   AddWastePinScreen(this._location);
 
+  @override
+  _AddWastePinScreenState createState() => _AddWastePinScreenState();
+}
+
+class _AddWastePinScreenState extends State<AddWastePinScreen> {
+
   TextEditingController _textEditingController=new TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isLoading=false;
 
 
   // TODO add pin operations and state widget
@@ -19,7 +27,7 @@ class AddWastePinScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Waste pin - add")),
-      body: GestureDetector(
+      body: (_isLoading)?SplashScreen():GestureDetector(
         onTap: () =>  FocusScope.of(context).requestFocus(FocusNode()),
         child: ListView(
           children: [
@@ -81,11 +89,19 @@ class AddWastePinScreen extends StatelessWidget {
                   if(_formKey.currentState.validate()){
 
                     WastePin pin=WastePin();
-                    pin.location=_location;
-                    pin.id=Uuid().v1(options: _location?.toMap());
+                    pin.location=widget._location;
+                    pin.id=Uuid().v1(options: widget._location?.toMap());
                     pin.note=_textEditingController.text.trim();
                     pin.remoteUrl="https://www.conserve-energy-future.com/wp-content/uploads/2017/09/litter-trash-garbage-overflow.jpg";
-                    WastePinService().addWastePin(pin);
+                    _isLoading=true;
+                    WastePinService().addWastePin(pin).then((value) {
+                      _isLoading=false;
+                      InfoAlertDialog.infoAlertWithSingleButtonCallback(context, "Data added successfully", "Success", () {
+                        Navigator.of(context).pop();
+                      });
+
+
+                    });
                   }
             },
             child: Padding(

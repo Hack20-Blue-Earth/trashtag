@@ -2,8 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
+import 'package:wastepin/issue_screen.dart';
 import 'package:wastepin/map_view/map_view.dart';
-import 'package:wastepin/photo/camera_screen.dart';
+import 'package:wastepin/on_boarding.dart';
 import 'package:wastepin/data/wastepin.dart';
 import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/waste_pin_detail.dart';
@@ -15,7 +16,7 @@ WastePinService wastePinService = WastePinService();
 class DebugApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DebugScreenPicker();
+    return IssueScreen();
   }
 }
 
@@ -34,15 +35,7 @@ class DebugScreenPicker extends StatelessWidget {
             ),
           ),
           RaisedButton(
-            child: Text("Camera Screen"),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (c) => CameraScreen(),
-              ),
-            ),
-          ),
-          RaisedButton(
-            child: Text("Image View new picker"),
+            child: Text("Waste Photo new picker"),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => WastePhotoScreenTest(),
@@ -50,7 +43,7 @@ class DebugScreenPicker extends StatelessWidget {
             ),
           ),
           RaisedButton(
-            child: Text("Image View update"),
+            child: Text("Waste Photo update"),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => WastePhotoScreenTest(isNew: false),
@@ -66,10 +59,10 @@ class DebugScreenPicker extends StatelessWidget {
             ),
           ),
           RaisedButton(
-            child: Text("Waste Gallery"),
+            child: Text("Waste issue List"),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (c) => WasteGallery(),
+                builder: (c) => IssueScreen(),
               ),
             ),
           ),
@@ -78,6 +71,14 @@ class DebugScreenPicker extends StatelessWidget {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => MapView(),
+              ),
+            ),
+          ),
+           RaisedButton(
+            child: Text("On Boarding"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => OnBoarding(),
               ),
             ),
           ),

@@ -10,7 +10,7 @@ class MapView extends StatelessWidget {
       body: Container(
         child: Center(
           child: GoogleMap(
-            initialCameraPosition: CameraPosition(target: LatLng(0, 0),zoom:14),
+            initialCameraPosition: CameraPosition(target: LatLng(0, 0),zoom:0.0),
           ),
         ),
       ),

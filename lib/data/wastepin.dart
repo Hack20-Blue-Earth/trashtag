@@ -1,7 +1,9 @@
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import "package:uuid/uuid.dart";
 import 'package:uuid/uuid_util.dart';
 
-var wildWastePhotos=[
+var wildWastePhotos = [
   'https://thedailynews.cc/wp-content/uploads/2017/09/loc-0928-ew-park-trash-3.jpg',
   'https://s.hdnux.com/photos/34/77/76/7602051/5/gallery_medium.jpg',
   'https://image.shutterstock.com/image-photo/environmental-problems-garbage-forest-600w-1706577346.jpg',
@@ -33,6 +35,11 @@ class WastePinService {
     return _inMemoryList;
   }
 
+  Future<List<WastePin>> fetchNearby(Location location) async {
+    await Future.delayed(Duration(seconds: 2));
+    return _inMemoryList;
+  }
+
   void addWastePin(WastePin pin) {
     _inMemoryList.add(pin);
   }
@@ -51,13 +58,22 @@ class WastePinService {
 }
 
 class WastePin {
+  static String CATEGORY_TRASH_OVERFLOW = "Trash overflow";
+
   String id;
+  String category = CATEGORY_TRASH_OVERFLOW;
   String note;
   String localFilePath; // it could be asset too
   String remoteUrl;
   Location location;
 
-  WastePin({this.id, this.note, this.localFilePath, this.location, this.remoteUrl}) {
+  WastePin(
+      {this.id,
+      this.note,
+      this.category,
+      this.localFilePath,
+      this.location,
+      this.remoteUrl}) {
     if (this.id == null) {
       this.id = Uuid().v1(options: location?.toMap());
     }
@@ -76,5 +92,13 @@ class Location {
 
   Map<String, double> toMap() {
     return {"longitude": longitude, "latitude": latitude};
+  }
+
+  factory Location.fromPosition(Position userPosition) {
+    return Location(userPosition.longitude, userPosition.latitude);
+  }
+
+  LatLng toLatLng() {
+    return LatLng(latitude, longitude);
   }
 }

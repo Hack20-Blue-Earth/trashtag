@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_fimber/flutter_fimber.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapPickerScreen extends StatelessWidget {
@@ -26,6 +28,28 @@ class MapPicker extends StatefulWidget {
 
 class _MapPickerState extends State<MapPicker> {
   CameraPosition _cameraPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialPosition == null) {
+      Geolocator()
+          .getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+          .then((value) {
+        Fimber.d("User location: $value");
+        if (value != null) {
+          setState(() {
+            _cameraPosition = CameraPosition(
+                target: LatLng(value.latitude, value.longitude), zoom: 10);
+          });
+        }
+      });
+    } else {
+      _cameraPosition = CameraPosition(
+          target: widget.initialPosition ?? LatLng(0, 0), zoom: 10);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -33,17 +57,18 @@ class _MapPickerState extends State<MapPicker> {
         Flexible(
           child: Stack(
             children: [
-              GoogleMap(
-                onCameraMove: (value) {
-                  setState(() {
-                    _cameraPosition = value;
-                  });
-                },
-                compassEnabled: true,
-                myLocationButtonEnabled: true,
-                initialCameraPosition: CameraPosition(
-                    target: widget.initialPosition ?? LatLng(0, 0), zoom: 10),
-              ),
+              (_cameraPosition == null)
+                  ? Center(child: CircularProgressIndicator())
+                  : GoogleMap(
+                      onCameraMove: (value) {
+                        setState(() {
+                          _cameraPosition = value;
+                        });
+                      },
+                      compassEnabled: true,
+                      myLocationButtonEnabled: true,
+                      initialCameraPosition: _cameraPosition,
+                    ),
               Center(
                 child: Icon(Icons.gps_not_fixed),
               ),

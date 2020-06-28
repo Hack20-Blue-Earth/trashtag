@@ -36,14 +36,15 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
     LatLng pickedLocation = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => MapPickerScreen(
-          initialPosition: pinLocation.toLatLng(),
+          initialPosition: pinLocation?.toLatLng(),
         ),
       ),
     );
-
-    setState(() {
-      pinLocation = Location.fromLatLng(pickedLocation);
-    });
+    if (pickedLocation != null) {
+      setState(() {
+        pinLocation = Location.fromLatLng(pickedLocation);
+      });
+    }
   }
 
   userCurrentLocation() {
@@ -99,13 +100,24 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
                     ),
                     Center(
                       child: (pinLocation == null)
-                          ? FlatButton(
-                              child: Text("Use current Locaton"),
-                              onPressed: userCurrentLocation,
+                          ? ButtonBar(
+                              alignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                FlatButton.icon(
+                                  icon: Icon(Icons.gps_fixed),
+                                  label: Text("Use current Locaton"),
+                                  onPressed: userCurrentLocation,
+                                ),
+                                FlatButton.icon(
+                                  icon: Icon(Icons.map),
+                                  label: Text("Pick from Map"),
+                                  onPressed: () => pickLocation(context),
+                                )
+                              ],
                             )
                           : FlatButton(
                               onPressed: () => pickLocation(context),
-                              child: Text("Location: $pinLocation"),
+                              child: Text("Change Location: $pinLocation"),
                             ),
                     ),
                     SizedBox(

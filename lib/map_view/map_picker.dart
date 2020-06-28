@@ -16,17 +16,51 @@ class MapPickerScreen extends StatelessWidget {
   }
 }
 
-class MapPicker extends StatelessWidget {
+class MapPicker extends StatefulWidget {
   final LatLng initialPosition;
   MapPicker({Key key, this.initialPosition}) : super(key: key);
 
   @override
+  _MapPickerState createState() => _MapPickerState();
+}
+
+class _MapPickerState extends State<MapPicker> {
+  CameraPosition _cameraPosition;
+  @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      compassEnabled: true,
-      myLocationButtonEnabled: true,
-      initialCameraPosition:
-          CameraPosition(target: initialPosition ?? LatLng(0, 0), zoom: 10),
+    return Column(
+      children: [
+        Flexible(
+          child: Stack(
+            children: [
+              GoogleMap(
+                onCameraMove: (value) {
+                  setState(() {
+                    _cameraPosition = value;
+                  });
+                },
+                compassEnabled: true,
+                myLocationButtonEnabled: true,
+                initialCameraPosition: CameraPosition(
+                    target: widget.initialPosition ?? LatLng(0, 0), zoom: 10),
+              ),
+              Center(
+                child: Icon(Icons.gps_not_fixed),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FlatButton(
+            color: Theme.of(context).dialogBackgroundColor,
+            child: Text("Pick This location"),
+            onPressed: () {
+              Navigator.pop(context, _cameraPosition.target);
+            },
+          ),
+        ),
+      ],
     );
   }
 }

@@ -75,7 +75,7 @@ class WastePinService {
     return downloadUrl;
   }
 
-  Future<void> addWastePin(
+  Future<WastePin> addWastePin(
     WastePin pin,
   ) async {
     Fimber.i('Adding waste pin. :$pin');

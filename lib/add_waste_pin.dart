@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import 'package:wastepin/map_view/map_view.dart';
 import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/splash_screen.dart';
+import 'package:wastepin/waste_pin_detail.dart';
 
 import 'custom_widgets/info_alert_dialog.dart';
 import 'data/wastepin.dart';
@@ -32,7 +33,13 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
 
   pickLocation(BuildContext context) async {
     Fimber.d("Pick location on map.");
-    LatLng pickedLocation = await Navigator.of(context).push(MaterialPageRoute(builder: (ctx)=>MapPickerScreen(initialPosition: pinLocation.toLatLng(),),),);
+    LatLng pickedLocation = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => MapPickerScreen(
+          initialPosition: pinLocation.toLatLng(),
+        ),
+      ),
+    );
 
     setState(() {
       pinLocation = Location.fromLatLng(pickedLocation);
@@ -45,9 +52,11 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((value) {
       Fimber.d("User location: $value");
-      setState(() {
-        pinLocation = Location.fromPosition(value);
-      });
+      if (value != null) {
+        setState(() {
+          pinLocation = Location.fromPosition(value);
+        });
+      }
     });
   }
 
@@ -69,7 +78,7 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Add Waste Pin")),    
+      appBar: AppBar(title: Text("Add Waste Pin")),
       body: (_isLoading)
           ? Center(child: CircularProgressIndicator())
           : Padding(
@@ -166,14 +175,12 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
                   setState(() {
                     _isLoading = false;
                   });
-                  await Scaffold.of(context)
-                      .showSnackBar(
-                        SnackBar(
-                          content: Text("Thank you for submission."),
-                        ),
-                      )
-                      .closed;
-                  Navigator.of(context).pop(value);
+
+                  Navigator.pop(context, value);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (ctx) => WastePinDetail(value)));
                 });
               }
             },

@@ -85,7 +85,8 @@ class WastePinService {
       pin.remoteUrl = remoteUrl;
     }
 
-    var docRef= await firestoreInstance.collection('wastepins').add(pin.toJson());
+    var docRef =
+        await firestoreInstance.collection('wastepins').add(pin.toJson());
     var createdPin = WastePin.fromJson((await docRef.get()).data);
     inMemoryList.add(createdPin);
     return createdPin;
@@ -170,6 +171,11 @@ class Location {
 
   LatLng toLatLng() {
     return LatLng(latitude, longitude);
+  }
+
+  factory Location.fromLatLng(LatLng latLng) {
+    if (latLng == null) return null;
+    return Location(latLng.longitude, latLng.latitude);
   }
 
   factory Location.fromMap(Map<String, Object> data) {

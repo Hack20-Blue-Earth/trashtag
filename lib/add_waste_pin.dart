@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:wastepin/map_view/map_view.dart';
 import 'package:wastepin/photo/photo_screen.dart';
@@ -26,42 +29,14 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
   String _photoFilePath;
 
   Location pinLocation;
-  BottomSheet pickLocationSheet;
 
   pickLocation(BuildContext context) async {
     Fimber.d("Pick location on map.");
-    pickLocationSheet = BottomSheet(onClosing: () {
-      Fimber.i("Closing sheet");
-      setState(() => pickLocationSheet = null);
-    }, builder: (c) {
-      return AspectRatio(
-          aspectRatio: 1.5,
-          child: Stack(
-            children: [
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Card(
-                  elevation: 3,
-                  child: MapPicker(
-                    initialPosition: pinLocation.toLatLng(),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 16,
-                right: 16,
-                child: FlatButton(
-                  onPressed: () => setState(() => pickLocationSheet = null),
-                  child: Icon(Icons.close),
-                ),
-              )
-            ],
-          ));
+    LatLng pickedLocation = await Navigator.of(context).push(MaterialPageRoute(builder: (ctx)=>MapPickerScreen(initialPosition: pinLocation.toLatLng(),),),);
+
+    setState(() {
+      pinLocation = Location.fromLatLng(pickedLocation);
     });
-    setState(() {});
   }
 
   userCurrentLocation() {
@@ -94,8 +69,7 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Add Waste Pin")),
-      bottomSheet: pickLocationSheet,
+      appBar: AppBar(title: Text("Add Waste Pin")),    
       body: (_isLoading)
           ? Center(child: CircularProgressIndicator())
           : Padding(

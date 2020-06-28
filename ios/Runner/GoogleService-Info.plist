@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>211876462098-ugkp55tik2pkn7tm794eb4tb4ts9rl36.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.211876462098-ugkp55tik2pkn7tm794eb4tb4ts9rl36</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>211876462098-1tkvfv9cmr849tqfe78kmlapp7lrrrpt.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCYUjWSKSBbGL9tYmZEn1pSIsq39ncnges</string>
+	<key>GCM_SENDER_ID</key>
+	<string>211876462098</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.blueearth.wastepin.app</string>
+	<key>PROJECT_ID</key>
+	<string>hack20-wastepin</string>
+	<key>STORAGE_BUCKET</key>
+	<string>hack20-wastepin.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:211876462098:ios:b1bfa08732aa082b45a2cb</string>
+	<key>DATABASE_URL</key>
+	<string>https://hack20-wastepin.firebaseio.com</string>
+</dict>
+</plist>

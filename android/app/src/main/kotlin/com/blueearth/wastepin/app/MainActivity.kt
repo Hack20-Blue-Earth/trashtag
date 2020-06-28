@@ -1,4 +1,4 @@
-package com.example.trashtag
+package com.blueearth.wastepin.app
 
 import io.flutter.embedding.android.FlutterActivity
 

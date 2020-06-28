@@ -2,27 +2,18 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
-import 'package:trashtag/photo/camera_screen.dart';
-import 'package:trashtag/data/wastepin.dart';
-import 'package:trashtag/photo/photo_screen.dart';
-import 'package:trashtag/waste_pin_detail.dart';
+import 'package:wastepin/map_view/map_view.dart';
+import 'package:wastepin/photo/camera_screen.dart';
+import 'package:wastepin/data/wastepin.dart';
+import 'package:wastepin/photo/photo_screen.dart';
+import 'package:wastepin/waste_pin_detail.dart';
 
 WastePinService wastePinService = WastePinService();
 
 class DebugApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-
-    
-    return MaterialApp(
-      title: 'Test Debug Screen',
-      theme: ThemeData(
-        primarySwatch: Colors.yellow,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: DebugScreenPicker(),
-    );
+    return DebugScreenPicker();
   }
 }
 
@@ -69,6 +60,14 @@ class DebugScreenPicker extends StatelessWidget {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => WasteGallery(),
+              ),
+            ),
+          ),
+           RaisedButton(
+            child: Text("Map View"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => MapView(),
               ),
             ),
           ),

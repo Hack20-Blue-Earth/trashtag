@@ -67,7 +67,8 @@ class _MapViewState extends State<MapView> {
             var wastePin = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (c) => AddWastePinScreen(Location(newPinLocation.longitude,newPinLocation.latitude)),
+                builder: (c) => AddWastePinScreen(Location(
+                    newPinLocation.longitude, newPinLocation.latitude)),
               ),
             );
             Fimber.i("Added pin: $wastePin");
@@ -106,12 +107,13 @@ class _MapViewState extends State<MapView> {
       return null;
     }
     return wastePinList
+        .where((element) => element.location != null)
         .map(
           (e) => Marker(
             markerId: MarkerId(e.id),
             icon: BitmapDescriptor.defaultMarkerWithHue(
                 BitmapDescriptor.hueOrange),
-            position: e.location.toLatLng(),
+            position: e.location?.toLatLng(),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => WastePinDetail(e),

@@ -8,6 +8,8 @@ import 'package:wastepin/data/wastepin.dart';
 import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/waste_pin_detail.dart';
 
+import 'add_waste_pin.dart';
+
 WastePinService wastePinService = WastePinService();
 
 class DebugApp extends StatelessWidget {
@@ -52,6 +54,14 @@ class DebugScreenPicker extends StatelessWidget {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => WastePhotoScreenTest(isNew: false),
+              ),
+            ),
+          ),
+          RaisedButton(
+            child: Text("Add New Location"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => AddWastePinScreen(),
               ),
             ),
           ),

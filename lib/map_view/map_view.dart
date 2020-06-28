@@ -112,12 +112,13 @@ class _MapViewState extends State<MapView> {
       return null;
     }
     return wastePinList
+        .where((element) => element.location != null)
         .map(
           (e) => Marker(
             markerId: MarkerId(e.id),
             icon: BitmapDescriptor.defaultMarkerWithHue(
                 BitmapDescriptor.hueOrange),
-            position: e.location.toLatLng(),
+            position: e.location?.toLatLng(),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => WastePinDetail(e),

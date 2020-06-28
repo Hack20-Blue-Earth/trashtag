@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
-import 'package:trashtag/routes.dart';
-import 'package:trashtag/theme/app_config.dart';
+import 'package:wastepin/routes.dart';
+import 'package:wastepin/theme/app_config.dart';
 
 
 Future<void> main() async {

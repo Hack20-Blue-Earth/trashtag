@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:trashtag/data/wastepin.dart';
+import 'package:wastepin/data/wastepin.dart';
 
 class WastePinDetail extends StatelessWidget {
   final WastePin wastePin;

@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:wastepin/issue_screen.dart';
 import 'package:wastepin/map_view/map_view.dart';
+import 'package:wastepin/on_boarding.dart';
 import 'package:wastepin/photo/camera_screen.dart';
 import 'package:wastepin/data/wastepin.dart';
 import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/waste_pin_detail.dart';
+
+import 'add_waste_pin.dart';
 
 WastePinService wastePinService = WastePinService();
 
@@ -57,6 +60,14 @@ class DebugScreenPicker extends StatelessWidget {
             ),
           ),
           RaisedButton(
+            child: Text("Add New Location"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => AddWastePinScreen(),
+              ),
+            ),
+          ),
+          RaisedButton(
             child: Text("Waste Gallery"),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
@@ -69,6 +80,14 @@ class DebugScreenPicker extends StatelessWidget {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (c) => MapView(),
+              ),
+            ),
+          ),
+           RaisedButton(
+            child: Text("On Boarding"),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => OnBoarding(),
               ),
             ),
           ),

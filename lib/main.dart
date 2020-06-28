@@ -7,7 +7,6 @@ import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:wastepin/routes.dart';
 import 'package:wastepin/theme/app_config.dart';
-import 'issue_screen.dart';
 import 'splash_screen.dart';
 
 import 'data/wastepin.dart';
@@ -42,7 +41,7 @@ class WasteBinApp extends StatelessWidget {
     return MaterialApp(
       title: "Waste Bin",
       theme: config.themeData,
-      home: IssueScreen(),
+      home: DebugApp(),
     );
   }
 }

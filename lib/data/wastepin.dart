@@ -1,7 +1,8 @@
+import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import "package:uuid/uuid.dart";
-import 'package:uuid/uuid_util.dart';
+import '../main.dart';
 
 var wildWastePhotos = [
   'https://thedailynews.cc/wp-content/uploads/2017/09/loc-0928-ew-park-trash-3.jpg',
@@ -17,11 +18,11 @@ var wildWastePhotos = [
 ];
 
 class WastePinService {
-  List<WastePin> _inMemoryList;
+  List<WastePin> inMemoryList;
 
   WastePinService() {
 // Temporary generation
-    _inMemoryList = List.generate(
+    inMemoryList = List.generate(
         wildWastePhotos.length,
         (index) => WastePin(
             remoteUrl: wildWastePhotos[index],
@@ -30,23 +31,26 @@ class WastePinService {
                 -80 + ((index % 3) * 0.01), 40 + ((index / 3) * 0.01))));
   }
 
-  List<WastePin> fetch() {
+  Future<List<WastePin>> fetch() async {
     // TODO connect to API and fetch
-    return _inMemoryList;
+    return inMemoryList;
   }
 
   Future<List<WastePin>> fetchNearby(Location location) async {
-    await Future.delayed(Duration(seconds: 2));
-    return _inMemoryList;
+    Fimber.d("Loading data from Firestore.");
+    var snap = await firestoreInstance.collection('wastepins').getDocuments();
+    var list = snap.documents.map((e) => WastePin.fromMap(e.data)).toList();
+    Fimber.d("Loaded ${list.length} WastePins");
+    return list;
   }
 
   void addWastePin(WastePin pin) {
-    _inMemoryList.add(pin);
+    inMemoryList.add(pin);
   }
 
   void updateWastePin(WastePin pin) {
     // faking update to server and local
-    var inMemory = _inMemoryList.firstWhere((element) => (element.id == pin.id),
+    var inMemory = inMemoryList.firstWhere((element) => (element.id == pin.id),
         orElse: () => null);
     if (inMemory != null) {
       inMemory.localFilePath = pin.localFilePath;
@@ -58,10 +62,10 @@ class WastePinService {
 }
 
 class WastePin {
-  static String CATEGORY_TRASH_OVERFLOW = "Trash overflow";
+  static var categoryTrashOverflow = "Trash overflow";
 
   String id;
-  String category = CATEGORY_TRASH_OVERFLOW;
+  String category = categoryTrashOverflow;
   String note;
   String localFilePath; // it could be asset too
   String remoteUrl;
@@ -77,6 +81,15 @@ class WastePin {
     if (this.id == null) {
       this.id = Uuid().v1(options: location?.toMap());
     }
+  }
+
+  factory WastePin.fromMap(Map<String, Object> data) {
+    return WastePin(
+        id: data['id'],
+        note: data['note'],
+        category: data['category'],
+        location: Location.fromMap(data['location']),
+        remoteUrl: data['remoteUrl']);
   }
 }
 
@@ -100,5 +113,13 @@ class Location {
 
   LatLng toLatLng() {
     return LatLng(latitude, longitude);
+  }
+
+  factory Location.fromMap(Map<String, Object> data) {
+    if (data != null) {
+      return Location(data['longitude'], data['latitude']);
+    } else {
+      return Location(0, 0);
+    }
   }
 }

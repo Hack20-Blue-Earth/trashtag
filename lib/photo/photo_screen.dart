@@ -18,7 +18,7 @@ class WastePhotoScreenTest extends StatelessWidget {
   Widget build(BuildContext context) {
     WastePin wastePin;
     if (!isNew) {
-      wastePin = wastePinService.fetch().random();
+      wastePin = wastePinService.inMemoryList.random();
     } else {
       wastePin = preloadPin;
     }

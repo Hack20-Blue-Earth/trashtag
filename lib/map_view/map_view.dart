@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../add_waste_pin.dart';
 import '../data/wastepin.dart';
 import '../debug-main.dart';
 import '../waste_pin_detail.dart';
 import 'package:fimber/fimber.dart';
 import '../splash_screen.dart';
+
+class MapScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        child: MapView(),
+      ),
+    );
+  }
+}
 
 class MapView extends StatefulWidget {
   const MapView({Key key}) : super(key: key);
@@ -46,26 +58,46 @@ class _MapViewState extends State<MapView> {
     return position != null && wastePinList != null;
   }
 
+  addNewWastePin(BuildContext context, LatLng newPinLocation) async {
+    var addNewSnackbar = SnackBar(
+        duration: Duration(seconds: 10),
+        action: SnackBarAction(
+          label: "Add Here...",
+          onPressed: () async {
+            var wastePin = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (c) => AddWastePinScreen(),
+              ),
+            );
+            Fimber.i("Added pin: $wastePin");
+          },
+        ),
+        content: ListTile(
+          title: Text("Add new Waste Pin"),
+          leading: Icon(Icons.pin_drop),
+        ));
+
+    await Scaffold.of(context).showSnackBar(addNewSnackbar).closed;
+    Fimber.i("Snackbar closed");
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Center(
-          child: isDataAvailable
-              ? GoogleMap(
-                  markers: prepareMarkers(wastePinList),
-                  initialCameraPosition: CameraPosition(
-                    // target:                  LatLng(widget.position.latitude, widget.position.longitude),
-                    target: wastePinList?.first?.location?.toLatLng() ??
-                        LatLng(
-                            position?.latitude ?? 0, position?.longitude ?? 0),
-                    zoom: 17,
-                    // bearing: position?.heading ?? 0,
-                  ),
-                )
-              : SplashScreen(),
-        ),
-      ),
+    return Center(
+      child: isDataAvailable
+          ? GoogleMap(
+              onLongPress: (ln) => addNewWastePin(context, ln),
+              markers: prepareMarkers(wastePinList),
+              initialCameraPosition: CameraPosition(
+                // target:                  LatLng(widget.position.latitude, widget.position.longitude),
+                target: wastePinList?.first?.location?.toLatLng() ??
+                    LatLng(position?.latitude ?? 0, position?.longitude ?? 0),
+                zoom: 17,
+                // bearing: position?.heading ?? 0,
+              ),
+            )
+          : SplashScreen(),
     );
   }
 

@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:image_picker/image_picker.dart';
@@ -45,15 +45,19 @@ class WastePhotoScreenTest extends StatelessWidget {
   }
 }
 
+typedef void PickedFileCallback(String photoFilePath, bool tookPhoto);
+
 // Screen to pick image from galerry and review photo (cropping pan zoom, optinally added later)
 class WastePhoto extends StatefulWidget {
   final WastePin wastePin;
   final bool disableActions;
+  final PickedFileCallback pickedFileCallback;
 
   final bool downloadAvailable;
   const WastePhoto(
       {Key key,
       this.wastePin,
+      this.pickedFileCallback,
       this.downloadAvailable = false,
       this.disableActions = false})
       : super(key: key);
@@ -93,6 +97,7 @@ class _WastePhotoState extends State<WastePhoto> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        widget.pickedFileCallback(pickedFile.path, true);
       });
     }
   }
@@ -102,6 +107,7 @@ class _WastePhotoState extends State<WastePhoto> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        widget.pickedFileCallback(pickedFile.path, false);
       });
     }
   }
@@ -157,18 +163,16 @@ class _WastePhotoState extends State<WastePhoto> {
                     height: 56,
                     child: MaterialButton(
                       shape: CircleBorder(
-                          side: BorderSide(
-                              width: 0,
-                              color: Colors.red,
-                              style: BorderStyle.solid)),
+                          side: BorderSide(width: 0, style: BorderStyle.none)),
                       child: Center(
                         child: Icon(
                           Icons.delete_forever,
+                          color: Theme.of(context).secondaryHeaderColor,
                           semanticLabel: "Remove Image",
                         ),
                       ),
-                      color: Colors.yellow,
-                      onPressed: getFromGallery,
+                      color: Theme.of(context).primaryColor,
+                      onPressed: removeImage,
                     ),
                   ),
                 ),
@@ -178,17 +182,15 @@ class _WastePhotoState extends State<WastePhoto> {
                   height: 56,
                   child: MaterialButton(
                     shape: CircleBorder(
-                        side: BorderSide(
-                            width: 0,
-                            color: Colors.red,
-                            style: BorderStyle.solid)),
+                        side: BorderSide(width: 0, style: BorderStyle.none)),
                     child: Center(
                       child: Icon(
                         Icons.photo_library,
+                        color: Theme.of(context).secondaryHeaderColor,
                         semanticLabel: 'Pick Image',
                       ),
                     ),
-                    color: Colors.yellow,
+                    color: Theme.of(context).primaryColor,
                     onPressed: getFromGallery,
                   ),
                 ),
@@ -198,15 +200,13 @@ class _WastePhotoState extends State<WastePhoto> {
                   height: 56,
                   child: MaterialButton(
                     shape: CircleBorder(
-                        side: BorderSide(
-                            width: 0,
-                            color: Colors.red,
-                            style: BorderStyle.solid)),
+                        side: BorderSide(width: 0, style: BorderStyle.none)),
                     child: Icon(
                       Icons.add_a_photo,
+                      color: Theme.of(context).secondaryHeaderColor,
                       semanticLabel: 'Snap photo',
                     ),
-                    color: Colors.yellow,
+                    color: Theme.of(context).primaryColor,
                     onPressed: getFromCamera,
                   ),
                 ),

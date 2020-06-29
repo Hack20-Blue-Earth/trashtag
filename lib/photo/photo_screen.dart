@@ -47,8 +47,8 @@ class WastePhotoScreenTest extends StatelessWidget {
   }
 }
 
-typedef void PickedFileCallback(
-    String photoFilePath, bool tookPhoto, DateTime photoTime);
+typedef void PickedFileCallback(String photoFilePath, bool tookPhoto,
+    DateTime photoTime, Location photoLocation);
 
 // Screen to pick image from galerry and review photo (cropping pan zoom, optinally added later)
 class WastePhoto extends StatefulWidget {
@@ -73,6 +73,7 @@ class _WastePhotoState extends State<WastePhoto> {
   File _image;
   final picker = ImagePicker();
   DateTime photoTime;
+  Location photoLocation;
   bool get isNetworkImage {
     return (_image == null && widget.wastePin?.remoteUrl != null);
   }
@@ -98,15 +99,18 @@ class _WastePhotoState extends State<WastePhoto> {
   Future getFromCamera() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-        extractExif(pickedFile.path);
-        widget.pickedFileCallback(pickedFile.path, true, photoTime);
-      });
+      _image = File(pickedFile.path);
+      await extractExif(pickedFile.path);
+      if (photoTime == null) {
+        photoTime = DateTime.now();
+      }
+      widget.pickedFileCallback(
+          pickedFile.path, true, photoTime, photoLocation);
+      setState(() {});
     }
   }
 
-  extractExif(String filePath) async {
+  Future extractExif(String filePath) async {
     Map<String, IfdTag> data =
         await readExifFromBytes(await new File(filePath).readAsBytes());
 
@@ -124,28 +128,39 @@ class _WastePhotoState extends State<WastePhoto> {
     dateUnformatted = dateUnformatted.replaceFirst(":", "-");
     photoTime = DateTime.parse(dateUnformatted);
     if (data['GPS GPSLatitude'] != null && data['GPS GPSLongitude'] != null) {
-      var signLatitude = (data['GPS GPSLatitudeRef']=='N')? 1 : -1;
-      var signLongitude = (data['GPS GPSLongitudeRef']=='E')? 1: -1;
-      // data['GPS GPSLatitude']
-    }
-    setState(() {});
+      var signLatitude = (data['GPS GPSLatitudeRef'].printable == 'N') ? 1 : -1;
+      var signLongitude =
+          (data['GPS GPSLongitudeRef'].printable == 'E') ? 1 : -1;
+      var latitude = 0.0;
+      latitude += (data['GPS GPSLatitude'].values[0] as Ratio).numerator;
+      latitude += (data['GPS GPSLatitude'].values[1] as Ratio).numerator / 60;
+      latitude += (((data['GPS GPSLatitude'].values[2] as Ratio).numerator /
+              (data['GPS GPSLatitude'].values[2] as Ratio).denominator)) /
+          3600;
+      latitude = latitude * signLatitude;
 
+      var longitude = 0.0;
+      longitude += (data['GPS GPSLongitude'].values[0] as Ratio).numerator;
+      longitude += (data['GPS GPSLongitude'].values[1] as Ratio).numerator / 60;
+      longitude += (((data['GPS GPSLongitude'].values[2] as Ratio).numerator /
+              (data['GPS GPSLongitude'].values[2] as Ratio).denominator)) /
+          3600;
+      longitude = longitude * signLongitude;
+
+      photoLocation = Location(longitude, latitude);
+      Fimber.i("location: $photoLocation");
+    }
     Fimber.i("Capture time: $photoTime - ${data["Image DateTime"].printable}");
-    data.values.forEach((element) {
-      Fimber.i(
-          "${element.tag}/${element.tagType} ${element.values.toString()} - ${element.printable}");
-    });
   }
 
   Future getFromGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-
-        extractExif(pickedFile.path);
-        widget.pickedFileCallback(pickedFile.path, false, photoTime);
-      });
+      _image = File(pickedFile.path);
+      await extractExif(pickedFile.path);
+      widget.pickedFileCallback(
+          pickedFile.path, false, photoTime, photoLocation);
+      setState(() {});
     }
   }
 

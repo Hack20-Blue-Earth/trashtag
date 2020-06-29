@@ -68,11 +68,15 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
     pinLocation = widget._initialLocation;
   }
 
-  void pickedPhoto(String path, bool tookPhoto, DateTime time) {
+  void pickedPhoto(
+      String path, bool tookPhoto, DateTime time, Location photoLocation) {
     if (tookPhoto) {
       userCurrentLocation();
     }
     setState(() {
+      if (photoLocation != null) {
+        pinLocation = photoLocation;
+      }
       photoTime = time;
       _photoFilePath = path;
     });

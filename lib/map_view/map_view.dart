@@ -114,69 +114,69 @@ class _MapViewState extends State<MapView> {
     }
     wastePinList=wastePinList
         .where((element) => element.location != null).toList();
-    return 
-        wastePinList.fold<List<Marker>>([],
-          (list,e) => list..add(Marker(
-            markerId: MarkerId(e.id),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueOrange),
-            position: e.location?.toLatLng(),
-            onTap: () async {
-              _panelController.open();
+    return
+      wastePinList.fold<List<Marker>>([],
+            (list,e) => list..add(Marker(
+          markerId: MarkerId(e.id),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueOrange),
+          position: e.location?.toLatLng(),
+          onTap: () async {
+            _panelController.open();
 
-              _swiperControllerBusy = true;
-              await _swiperController.move(list.length-1,
-                  animation: true);
-              _swiperControllerBusy = false;
+            _swiperControllerBusy = true;
+            await _swiperController.move(list.length-1,
+                animation: true);
+            _swiperControllerBusy = false;
 
-              // showMaterialModalBottomSheet(
-              //   context: context,
-              //   enableDrag: true,
-              //   expand: true,
-              //   builder: (context, scrollController) => SizedBox(
-              //     height: 100,
-              //     child: Column(
-              //       children: [
-              //         Text("Waste Pin: ${e?.location?.toString() ?? 'NA'}"),
-              //         Text(
-              //             "Location and photo with notes, map and future comment section goes here"),
-              //         AspectRatio(
-              //           aspectRatio: 1.666,
-              //           child: Container(
-              //             decoration: BoxDecoration(
-              //               color: Colors.black,
-              //               border: Border.all(
-              //                 color: Colors.blue,
-              //               ),
-              //               borderRadius: BorderRadius.circular(10.0),
-              //             ),
-              //             child: WastePhoto(wastePin: e),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // );
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (c) => WastePinDetail(e),
-              //   ),
-              // );
+            // showMaterialModalBottomSheet(
+            //   context: context,
+            //   enableDrag: true,
+            //   expand: true,
+            //   builder: (context, scrollController) => SizedBox(
+            //     height: 100,
+            //     child: Column(
+            //       children: [
+            //         Text("Waste Pin: ${e?.location?.toString() ?? 'NA'}"),
+            //         Text(
+            //             "Location and photo with notes, map and future comment section goes here"),
+            //         AspectRatio(
+            //           aspectRatio: 1.666,
+            //           child: Container(
+            //             decoration: BoxDecoration(
+            //               color: Colors.black,
+            //               border: Border.all(
+            //                 color: Colors.blue,
+            //               ),
+            //               borderRadius: BorderRadius.circular(10.0),
+            //             ),
+            //             child: WastePhoto(wastePin: e),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // );
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (c) => WastePinDetail(e),
+            //   ),
+            // );
+          },
+          infoWindow: InfoWindow(
+            title: e.category,
+            snippet: e.note,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (c) => WastePinDetail(e),
+                ),
+              );
             },
-            infoWindow: InfoWindow(
-              title: e.category,
-              snippet: e.note,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (c) => WastePinDetail(e),
-                  ),
-                );
-              },
-            ),
-          )),
-        )
-        .toSet();
+          ),
+        )),
+      )
+          .toSet();
   }
 
   Completer<GoogleMapController> _controller = Completer();
@@ -209,57 +209,57 @@ class _MapViewState extends State<MapView> {
     return Scaffold(
       body: isDataAvailable
           ? SlidingUpPanel(
-              boxShadow: [],
-              maxHeight: MediaQuery.of(context).size.height * 0.85,
-              minHeight: MediaQuery.of(context).size.height * 0.37,
-              panelSnapping: true,
-              controller: _panelController,
-              color: Colors.transparent,
-              panel: Container(
-                child: Provider.value(
-                  value: wastePinList,
-                  child: MapViewListWastePin(
-                      onIndexChanged: _onIndexChanged,
-                      swiperController: _swiperController,
-                      index: _index),
-                ),
-              ),
-              body: Builder(builder: (context) {
-                return Center(
-                    child: Stack(
-                  children: <Widget>[
-                    Container(
-                      child: GoogleMap(
-                        markers: prepareMarkers(wastePinList),
-                        onLongPress: (ln) => addNewWastePin(context, ln),
-                        onTap: (_) {},
-                        initialCameraPosition: CameraPosition(
-                          // target:                  LatLng(widget.position.latitude, widget.position.longitude),
-                          target: wastePinList?.first?.location?.toLatLng() ??
-                              LatLng(position?.latitude ?? 0,
-                                  position?.longitude ?? 0),
-                          zoom: 17,
-                          // bearing: position?.heading ?? 0,
-                        ),
-                        mapType: MapType.normal,
-                        myLocationButtonEnabled: false,
-                        myLocationEnabled: true,
-                        onMapCreated: _onMapCreated,
-                        compassEnabled: false,
-                        zoomControlsEnabled: false,
+        boxShadow: [],
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+        minHeight: MediaQuery.of(context).size.height * 0.37,
+        panelSnapping: true,
+        controller: _panelController,
+        color: Colors.transparent,
+        panel: Container(
+          child: Provider.value(
+            value: wastePinList,
+            child: MapViewListWastePin(
+                onIndexChanged: _onIndexChanged,
+                swiperController: _swiperController,
+                index: _index),
+          ),
+        ),
+        body: Builder(builder: (context) {
+          return Center(
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    child: GoogleMap(
+                      markers: prepareMarkers(wastePinList),
+                      onLongPress: (ln) => addNewWastePin(context, ln),
+                      onTap: (_) {},
+                      initialCameraPosition: CameraPosition(
+                        // target:                  LatLng(widget.position.latitude, widget.position.longitude),
+                        target: wastePinList?.first?.location?.toLatLng() ??
+                            LatLng(position?.latitude ?? 0,
+                                position?.longitude ?? 0),
+                        zoom: 17,
+                        // bearing: position?.heading ?? 0,
                       ),
+                      mapType: MapType.normal,
+                      myLocationButtonEnabled: false,
+                      myLocationEnabled: true,
+                      onMapCreated: _onMapCreated,
+                      compassEnabled: false,
+                      zoomControlsEnabled: false,
                     ),
-                    Positioned.fill(
-                      child: Center(
-                        child: Icon(Icons.location_on,
-                            color: Theme.of(context).primaryColor),
-                      ),
+                  ),
+                  Positioned.fill(
+                    child: Center(
+                      child: Icon(Icons.location_on,
+                          color: Theme.of(context).primaryColor),
                     ),
-                
-                  ],
-                ));
-              }),
-            )
+                  ),
+
+                ],
+              ));
+        }),
+      )
           : LoadingScreen(),
     );
   }
@@ -421,7 +421,7 @@ class MapViewListWastePin extends StatelessWidget {
                               ),
                             ),
                           ),
-                                                    SizedBox(width:20),
+                          SizedBox(width:20),
 
                           Material(
                             color: MyCustomTheme.primaryColor,
@@ -477,10 +477,10 @@ class MapViewListWastePin extends StatelessWidget {
                                         color: MyCustomTheme.colorPrimary)),
                                 border: OutlineInputBorder(),
                                 labelText:
-                                    _wastePins[_index]
-                                        .photoTime
-                                        
-                                        ?.toString(),
+                                _wastePins[_index]
+                                    .photoTime
+
+                                    ?.toString(),
                               ),
                             ),
                           ),
@@ -489,35 +489,35 @@ class MapViewListWastePin extends StatelessWidget {
                       SizedBox(
                         height: 20,
                       ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom:19.0,right: 10.0, left:10.0),
-                    child: RaisedButton(
-                    elevation: 0.0,
-                    color: colorAccentDark,
-                    shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(20.0),
-                    side: BorderSide(color: colorAccentDark)),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 14.0,
-                                    horizontal: 12.0),
-                                child: Text(
-                                  "Picked Up Now",
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom:19.0,right: 10.0, left:10.0),
+                        child: RaisedButton(
+                          elevation: 0.0,
+                          color: colorAccentDark,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(20.0),
+                              side: BorderSide(color: colorAccentDark)),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 14.0,
+                                  horizontal: 12.0),
+                              child: Text(
+                                "Picked Up Now",
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
+                          ),
 
 
 
                           onPressed: () {},
                         ),
-                  ),
+                      ),
                       SizedBox(
                         height: 20,
                       ),

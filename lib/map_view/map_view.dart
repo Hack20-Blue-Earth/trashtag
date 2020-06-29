@@ -70,7 +70,7 @@ class _MapViewState extends State<MapView> {
     // fetch objects
     Fimber.d("Fetching nearby WastePins");
     if (position != null) {
-      if (widget.showSinglePin) {
+      if (widget.showSinglePin == true) {
         wastePinList = [widget.wastePin];
       } else {
         wastePinList =

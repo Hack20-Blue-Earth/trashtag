@@ -188,6 +188,7 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
               if (_formKey.currentState.validate()) {
                 WastePin pin = WastePin(
                     location: pinLocation,
+                    photoTime: photoTime,
                     localFilePath: _photoFilePath,
                     note: _textEditingController.text.trim());
                 setState(() {

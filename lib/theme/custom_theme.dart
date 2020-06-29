@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 final ThemeData myCustomTheme = new ThemeData(
   primaryColor: MyCustomTheme.colorPrimary,
   backgroundColor: MyCustomTheme.colorWhite,
-
+  secondaryHeaderColor: MyCustomTheme.colorGreyBackground,
   scaffoldBackgroundColor: MyCustomTheme.colorWhite,
   cursorColor: MyCustomTheme.colorAccent,
   visualDensity: VisualDensity.adaptivePlatformDensity,

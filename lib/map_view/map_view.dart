@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:wastepin/photo/photo_screen.dart';
+import 'package:wastepin/theme/custom_theme.dart';
 import '../add_waste_pin.dart';
 import '../data/wastepin.dart';
 import '../debug-main.dart';
@@ -36,6 +37,7 @@ class _MapViewState extends State<MapView> {
   List<WastePin> wastePinList;
 
   Position position;
+  ValueNotifier _index = ValueNotifier<int>(0);
 
   @override
   void initState() {
@@ -93,43 +95,51 @@ class _MapViewState extends State<MapView> {
     if (wastePinList == null) {
       return null;
     }
-    return wastePinList
-        .where((element) => element.location != null)
-        .map(
-          (e) => Marker(
+    wastePinList=wastePinList
+        .where((element) => element.location != null).toList();
+    return 
+        wastePinList.fold<List<Marker>>([],
+          (list,e) => list..add(Marker(
             markerId: MarkerId(e.id),
             icon: BitmapDescriptor.defaultMarkerWithHue(
                 BitmapDescriptor.hueOrange),
             position: e.location?.toLatLng(),
-            onTap: () {
-              showMaterialModalBottomSheet(
-                context: context,
-                enableDrag: true,
-                expand: true,
-                builder: (context, scrollController) => SizedBox(
-                  height: 100,
-                  child: Column(
-                    children: [
-                      Text("Waste Pin: ${e?.location?.toString() ?? 'NA'}"),
-                      Text(
-                          "Location and photo with notes, map and future comment section goes here"),
-                      AspectRatio(
-                        aspectRatio: 1.666,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            border: Border.all(
-                              color: Colors.blue,
-                            ),
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: WastePhoto(wastePin: e),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+            onTap: () async {
+              _panelController.open();
+
+              _swiperControllerBusy = true;
+              await _swiperController.move(list.length-1,
+                  animation: true);
+              _swiperControllerBusy = false;
+
+              // showMaterialModalBottomSheet(
+              //   context: context,
+              //   enableDrag: true,
+              //   expand: true,
+              //   builder: (context, scrollController) => SizedBox(
+              //     height: 100,
+              //     child: Column(
+              //       children: [
+              //         Text("Waste Pin: ${e?.location?.toString() ?? 'NA'}"),
+              //         Text(
+              //             "Location and photo with notes, map and future comment section goes here"),
+              //         AspectRatio(
+              //           aspectRatio: 1.666,
+              //           child: Container(
+              //             decoration: BoxDecoration(
+              //               color: Colors.black,
+              //               border: Border.all(
+              //                 color: Colors.blue,
+              //               ),
+              //               borderRadius: BorderRadius.circular(10.0),
+              //             ),
+              //             child: WastePhoto(wastePin: e),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // );
               // Navigator.of(context).push(
               //   MaterialPageRoute(
               //     builder: (c) => WastePinDetail(e),
@@ -139,11 +149,6 @@ class _MapViewState extends State<MapView> {
             infoWindow: InfoWindow(
               title: e.category,
               snippet: e.note,
-              //           onTap: () async {
-              //   _swiperControllerBusy = true;
-              //   await _swiperController.move(i, animation: true);
-              //   _swiperControllerBusy = true;
-              // },
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -152,7 +157,7 @@ class _MapViewState extends State<MapView> {
                 );
               },
             ),
-          ),
+          )),
         )
         .toSet();
   }
@@ -160,9 +165,11 @@ class _MapViewState extends State<MapView> {
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController _mapController;
   SwiperController _swiperController = SwiperController();
+  PanelController _panelController = PanelController();
   bool _swiperControllerBusy = false;
 
   Future<void> _onIndexChanged(int index) async {
+    _index.value = (index);
     if (wastePinList != null && !_swiperControllerBusy) {
       _mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
@@ -176,18 +183,33 @@ class _MapViewState extends State<MapView> {
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
     // setState(() {
-      _mapController = controller;
+    _mapController = controller;
     // });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      body: Builder(builder: (context) {
-        return Center(
-          child: isDataAvailable
-              ? Stack(
+      body: isDataAvailable
+          ? SlidingUpPanel(
+              boxShadow: [],
+              maxHeight: MediaQuery.of(context).size.height * 0.85,
+              minHeight: MediaQuery.of(context).size.height * 0.37,
+              panelSnapping: true,
+              controller: _panelController,
+              color: Colors.transparent,
+              panel: Container(
+                child: Provider.value(
+                  value: wastePinList,
+                  child: MapViewListWastePin(
+                      onIndexChanged: _onIndexChanged,
+                      swiperController: _swiperController,
+                      index: _index),
+                ),
+              ),
+              body: Builder(builder: (context) {
+                return Center(
+                    child: Stack(
                   children: <Widget>[
                     Container(
                       child: GoogleMap(
@@ -206,9 +228,8 @@ class _MapViewState extends State<MapView> {
                         myLocationButtonEnabled: false,
                         myLocationEnabled: true,
                         onMapCreated: _onMapCreated,
-                        // onCameraMove: _onCameraMove,
-                        zoomGesturesEnabled: true,
                         compassEnabled: false,
+                        zoomControlsEnabled: false,
                       ),
                     ),
                     Positioned.fill(
@@ -217,107 +238,262 @@ class _MapViewState extends State<MapView> {
                             color: Theme.of(context).primaryColor),
                       ),
                     ),
-                    Positioned(
-                      bottom: 0,
-                      child: Provider.value(
-                        value: wastePinList,
-                        child: MapViewListWastePin(
-                          onIndexChanged: _onIndexChanged,
-                          swiperController: _swiperController,
-                        ),
-                      ),
-                    )
+                
                   ],
-                )
-              : SplashScreen(),
-        );
-      }),
+                ));
+              }),
+            )
+          : SplashScreen(),
     );
   }
 }
 
 class MapViewListWastePin extends StatelessWidget {
   const MapViewListWastePin(
-      {Key key, this.onIndexChanged, this.swiperController})
+      {Key key, this.onIndexChanged, this.swiperController, this.index})
       : super(key: key);
   final ValueChanged<int> onIndexChanged;
   final SwiperController swiperController;
+  final ValueNotifier<int> index;
   @override
   Widget build(BuildContext context) {
     var _wastePins = Provider.of<List<WastePin>>(context);
 
     return Container(
-      padding: EdgeInsets.only(
-        top: 10,
-        bottom: 20,
-      ),
-      child: SizedBox(
-        height: 175,
-        width: MediaQuery.of(context).size.width,
-        child: Swiper(
-          itemCount: _wastePins != null ? _wastePins.length ?? 0 : 0,
-          viewportFraction: 0.6,
-          scale: .7,
-          onIndexChanged: onIndexChanged,
-          controller: swiperController,
-          curve: Curves.bounceInOut,
-          itemBuilder: (BuildContext context, int index) {
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(16.0),
-              child: Hero(
-                tag: _wastePins[index].remoteUrl,
-                child: Material(
-                  child: InkWell(
-                    onTap: () {},
+      height: MediaQuery.of(context).size.height * 0.75,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+          color: MyCustomTheme.backgroundColor,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 22,
+          ),
+          Material(
+            shape: StadiumBorder(),
+            color: MyCustomTheme.colorGreyText,
+            child: Container(
+              height: 5,
+              width: 134,
+            ),
+          ),
+          SizedBox(
+            height: 22,
+          ),
+          SizedBox(
+            height: 175,
+            width: MediaQuery.of(context).size.width,
+            child: Swiper(
+              itemCount: _wastePins != null ? _wastePins.length ?? 0 : 0,
+              viewportFraction: 0.7,
+              scale: 1,
+              onIndexChanged: onIndexChanged,
+              controller: swiperController,
+              curve: Curves.bounceInOut,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  padding: EdgeInsets.all(10),
+                  child: Material(
+                    elevation: 4,
+                    color: Colors.transparent,
+                    clipBehavior: Clip.antiAlias,
+                    borderRadius: BorderRadius.circular(16.0),
                     child: Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                  _wastePins[index].remoteUrl,
-                                ),
-                                fit: BoxFit.cover)),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.red,
-                                  ),
-                                  onPressed: () {},
-                                ),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.person_outline,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {},
-                                )
-                              ],
-                            ),
-                            Spacer(),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                _wastePins[index].category.toString() + ' \$',
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(2),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14.0),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: <Widget>[
+                              Image.network(
+                                _wastePins[index].remoteUrl,
+                                fit: BoxFit.cover,
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: SizedBox(
+                                    height: 40,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 2,
+                                          //#F8F8F8
+                                          color: Colors.white.withAlpha(150),
+                                        ),
+                                        Container(
+                                          height: 38,
+                                          //#3023B1
+                                          color: MyCustomTheme.primaryColor
+                                              .withAlpha(150),
+                                          child: Center(
+                                            child: Text(
+                                              _wastePins[index]
+                                                  .note
+                                                  .toString(),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
                         )),
                   ),
-                ),
-              ),
-            );
-          },
-        ),
+                );
+              },
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ValueListenableBuilder<int>(
+                valueListenable: index,
+                builder: (_, _index, ___) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Material(
+                        shape: StadiumBorder(),
+                        color: MyCustomTheme.colorAccentDark,
+                        child: Container(
+                          height: 3,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Location:',
+                        style: TextStyle(
+                          fontSize: 15,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextField(
+                              enabled: false,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: MyCustomTheme.colorPrimary)),
+                                border: OutlineInputBorder(),
+                                labelText: 'Lat: ' +
+                                    _wastePins[_index]
+                                        ?.location
+                                        ?.latitude
+                                        ?.toString()
+                                        .substring(0, 7),
+                              ),
+                            ),
+                          ),
+                                                    SizedBox(width:20),
+
+                          Material(
+                            color: MyCustomTheme.primaryColor,
+                            shape: StadiumBorder(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Icon(Icons.my_location, size: 40,color: Colors.white,),
+                            ),
+                          ),
+                          SizedBox(width:20),
+                          Expanded(
+                            child: TextField(
+                              enabled: false,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: MyCustomTheme.colorPrimary)),
+                                border: OutlineInputBorder(),
+                                labelText: 'Lng: ' +
+                                    _wastePins[_index]
+                                        ?.location
+                                        ?.latitude
+                                        ?.toString()
+                                        .substring(0, 7),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'Date Added:',
+                        style: TextStyle(
+                          fontSize: 15,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextField(
+                              enabled: false,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: MyCustomTheme.colorPrimary)),
+                                border: OutlineInputBorder(),
+                                labelText: 'Lat:' +
+                                    _wastePins[_index]
+                                        .note
+                                        
+                                        ?.toString(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      FlatButton(
+                        child: Text(
+                          "Picked Up Now",
+                          style: TextStyle(
+                            fontSize: 17,
+                          ),
+                        ),
+                        color: MyCustomTheme.primaryColor,
+                        textColor: MyCustomTheme.backgroundColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        onPressed: () {},
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  );
+                }),
+          ),
+        ],
       ),
     );
   }

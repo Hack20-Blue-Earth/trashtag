@@ -15,6 +15,7 @@ import 'package:wastepin/waste_pin_detail.dart';
 
 import 'custom_widgets/info_alert_dialog.dart';
 import 'data/wastepin.dart';
+import 'issue_listing_detail_screen.dart';
 import 'map_view/map_picker.dart';
 
 class AddWastePinScreen extends StatefulWidget {
@@ -222,7 +223,7 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (ctx) => WastePinDetail(value)));
+                          builder: (ctx) => IssueListingDetailScreen(value)));
                 });
               }
             },

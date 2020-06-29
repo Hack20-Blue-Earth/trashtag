@@ -85,7 +85,7 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
               ),
               centerTitle: false,
             ),
-            floatingActionButton: FloatingActionButton(onPressed: (){
+            floatingActionButton:currentTabIndex==0? FloatingActionButton(onPressed: (){
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -96,7 +96,7 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
 
             },backgroundColor: colorAccentDark,
             child: Icon(Icons.add, color: Colors.white,),
-            ),
+            ):null,
             body: Container(
               color: Colors.white,
               child: Column(

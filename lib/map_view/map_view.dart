@@ -20,7 +20,6 @@ import 'package:fimber/fimber.dart';
 import '../splash_screen.dart';
 
 class MapScreen extends StatelessWidget {
-
   List<WastePin> _wastePinList;
 
   MapScreen(this._wastePinList);
@@ -209,57 +208,92 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isDataAvailable
-          ? SlidingUpPanel(
-              boxShadow: [],
-              maxHeight: MediaQuery.of(context).size.height * 0.37, // 0.85,
-              minHeight: MediaQuery.of(context).size.height * 0.37,
-              panelSnapping: true,
-              controller: _panelController,
-              color: Colors.transparent,
-              panel: Container(
-                child: Provider.value(
-                  value: wastePinList,
-                  child: MapViewListWastePin(
-                      onIndexChanged: _onIndexChanged,
-                      swiperController: _swiperController,
-                      index: _index),
+          ? //  SlidingUpPanel(
+          //     boxShadow: [],
+          //     maxHeight: MediaQuery.of(context).size.height * 0.37, // 0.85,
+          //     minHeight: MediaQuery.of(context).size.height * 0.37,
+          //     panelSnapping: true,
+          //     controller: _panelController,
+          //     color: Colors.transparent,
+          //     panel: Container(
+          //       child: Provider.value(
+          //         value: wastePinList,
+          //         child: MapViewListWastePin(
+          //             onIndexChanged: _onIndexChanged,
+          //             swiperController: _swiperController,
+          //             index: _index),
+          //       ),
+          //     ),
+          //     body: Center(
+          //           child: Stack(
+          //         children: <Widget>[
+          //           Container(
+          //             child: GoogleMap(
+          //               markers: prepareMarkers(wastePinList),
+          //               onLongPress: (ln) => addNewWastePin(context, ln),
+          //               onTap: (_) {},
+          //               initialCameraPosition: CameraPosition(
+          //                 // target:                  LatLng(widget.position.latitude, widget.position.longitude),
+          //                 target: wastePinList?.first?.location?.toLatLng() ??
+          //                     LatLng(position?.latitude ?? 0,
+          //                         position?.longitude ?? 0),
+          //                 zoom: 17,
+          //                 // bearing: position?.heading ?? 0,
+          //               ),
+          //               mapType: MapType.normal,
+          //               myLocationButtonEnabled: false,
+          //               myLocationEnabled: true,
+          //               onMapCreated: _onMapCreated,
+          //               compassEnabled: false,
+          //               zoomControlsEnabled: false,
+          //             ),
+          //           ),
+          //           Positioned.fill(
+          //             child: Center(
+          //               child: Icon(Icons.location_on,
+          //                   color: Theme.of(context).primaryColor),
+          //             ),
+          //           ),
+          //         ],
+          //       )),
+
+          //   )
+
+          Center(
+              child: Column(
+              children: <Widget>[
+                Expanded(
+                  child: GoogleMap(
+                    markers: prepareMarkers(wastePinList),
+                    onLongPress: (ln) => addNewWastePin(context, ln),
+                    onTap: (_) {},
+                    initialCameraPosition: CameraPosition(
+                      // target:                  LatLng(widget.position.latitude, widget.position.longitude),
+                      target: wastePinList?.first?.location?.toLatLng() ??
+                          LatLng(position?.latitude ?? 0,
+                              position?.longitude ?? 0),
+                      zoom: 17,
+                      // bearing: position?.heading ?? 0,
+                    ),
+                    mapType: MapType.normal,
+                    myLocationButtonEnabled: false,
+                    myLocationEnabled: true,
+                    onMapCreated: _onMapCreated,
+                    compassEnabled: false,
+                    zoomControlsEnabled: false,
+                  ),
                 ),
-              ),
-              body: Builder(builder: (context) {
-                return Center(
-                    child: Stack(
-                  children: <Widget>[
-                    Container(
-                      child: GoogleMap(
-                        markers: prepareMarkers(wastePinList),
-                        onLongPress: (ln) => addNewWastePin(context, ln),
-                        onTap: (_) {},
-                        initialCameraPosition: CameraPosition(
-                          // target:                  LatLng(widget.position.latitude, widget.position.longitude),
-                          target: wastePinList?.first?.location?.toLatLng() ??
-                              LatLng(position?.latitude ?? 0,
-                                  position?.longitude ?? 0),
-                          zoom: 17,
-                          // bearing: position?.heading ?? 0,
-                        ),
-                        mapType: MapType.normal,
-                        myLocationButtonEnabled: false,
-                        myLocationEnabled: true,
-                        onMapCreated: _onMapCreated,
-                        compassEnabled: false,
-                        zoomControlsEnabled: false,
-                      ),
-                    ),
-                    Positioned.fill(
-                      child: Center(
-                        child: Icon(Icons.location_on,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                    ),
-                  ],
-                ));
-              }),
-            )
+                Container(
+                  child: Provider.value(
+                    value: wastePinList,
+                    child: MapViewListWastePin(
+                        onIndexChanged: _onIndexChanged,
+                        swiperController: _swiperController,
+                        index: _index),
+                  ),
+                ),
+              ],
+            ))
           : LoadingScreen(),
     );
   }
@@ -277,30 +311,30 @@ class MapViewListWastePin extends StatelessWidget {
     var _wastePins = Provider.of<List<WastePin>>(context);
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.37, // * 0.75,
+      height:220,// MediaQuery.of(context).size.height * 0.37, // * 0.75,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-          color: MyCustomTheme.backgroundColor,
+          color: MyCustomTheme.colorWhite,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30), topRight: Radius.circular(30))),
       child: Column(
         children: <Widget>[
+          // SizedBox(
+          //   height: 22,
+          // ),
+          // Material(
+          //   shape: StadiumBorder(),
+          //   color: MyCustomTheme.colorGreyText,
+          //   child: Container(
+          //     height: 5,
+          //     width: 134,
+          //   ),
+          // ),
+          // SizedBox(
+          //   height: 22,
+          // ),
           SizedBox(
-            height: 22,
-          ),
-          Material(
-            shape: StadiumBorder(),
-            color: MyCustomTheme.colorGreyText,
-            child: Container(
-              height: 5,
-              width: 134,
-            ),
-          ),
-          SizedBox(
-            height: 22,
-          ),
-          SizedBox(
-            height: 175,
+            height: 220,//175,
             width: MediaQuery.of(context).size.width,
             child: Swiper(
               itemCount: _wastePins != null ? _wastePins.length ?? 0 : 0,

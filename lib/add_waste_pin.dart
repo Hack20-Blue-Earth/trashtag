@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import 'package:wastepin/map_view/map_view.dart';
 import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/splash_screen.dart';
+import 'package:wastepin/theme/custom_theme.dart';
 import 'package:wastepin/waste_pin_detail.dart';
 
 import 'custom_widgets/info_alert_dialog.dart';
@@ -28,7 +29,7 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String _photoFilePath;
-
+  DateTime photoTime;
   Location pinLocation;
 
   pickLocation(BuildContext context) async {
@@ -67,11 +68,16 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
     pinLocation = widget._initialLocation;
   }
 
-  void pickedPhoto(String path, bool tookPhoto) {
+  void pickedPhoto(
+      String path, bool tookPhoto, DateTime time, Location photoLocation) {
     if (tookPhoto) {
       userCurrentLocation();
     }
     setState(() {
+      if (photoLocation != null) {
+        pinLocation = photoLocation;
+      }
+      photoTime = time;
       _photoFilePath = path;
     });
   }
@@ -82,59 +88,64 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
       appBar: AppBar(title: Text("Add Waste Pin")),
       body: (_isLoading)
           ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-                child: ListView(
-                  children: [
-                    AspectRatio(
-                        aspectRatio: 1.6666,
-                        child: WastePhoto(
-                          pickedFileCallback: pickedPhoto,
-                          downloadAvailable: false,
-                          wastePin: null,
-                        )),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Center(
+          : GestureDetector(
+              onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+              child: ListView(
+                children: [
+                  AspectRatio(
+                      aspectRatio: 1.6666,
+                      child: WastePhoto(
+                        pickedFileCallback: pickedPhoto,
+                        downloadAvailable: false,
+                        wastePin: null,
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Photo time: $photoTime"),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8),
+                    child: Center(
                       child: (pinLocation == null)
                           ? ButtonBar(
                               alignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 FlatButton.icon(
+                                  textColor: MyCustomTheme.primaryColor,
                                   icon: Icon(Icons.gps_fixed),
                                   label: Text("Use current Locaton"),
                                   onPressed: userCurrentLocation,
                                 ),
                                 FlatButton.icon(
+                                  textColor: MyCustomTheme.primaryColor,
                                   icon: Icon(Icons.map),
                                   label: Text("Pick from Map"),
                                   onPressed: () => pickLocation(context),
                                 )
                               ],
                             )
-                          : FlatButton(
-                              onPressed: () => pickLocation(context),
-                              child: Text("Change Location: $pinLocation"),
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text("$pinLocation"),
+                                FlatButton.icon(
+                                  textColor: MyCustomTheme.primaryColor,
+                                  icon: Icon(Icons.map),
+                                  label: Text("Pick from Map"),
+                                  onPressed: () => pickLocation(context),
+                                )
+                              ],
                             ),
                     ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "Notes",
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Form(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text("Notes",
+                        style: Theme.of(context).textTheme.headline5),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8),
+                    child: Form(
                       key: _formKey,
                       child: TextFormField(
                         controller: _textEditingController,
@@ -159,9 +170,9 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
                                 left: 15, bottom: 11, top: 11, right: 15),
                             hintText: "Enter your Notes here..."),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
             ),
       persistentFooterButtons: <Widget>[
@@ -169,14 +180,15 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
           width: MediaQuery.of(context).size.width,
           child: RaisedButton(
             elevation: 0.0,
-            color: Colors.blue,
+            color: MyCustomTheme.primaryColor,
             shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(40.0),
-                side: BorderSide(color: Colors.blue)),
+              borderRadius: new BorderRadius.circular(10.0),
+            ),
             onPressed: () {
               if (_formKey.currentState.validate()) {
                 WastePin pin = WastePin(
                     location: pinLocation,
+                    photoTime: photoTime,
                     localFilePath: _photoFilePath,
                     note: _textEditingController.text.trim());
                 setState(() {
@@ -199,9 +211,9 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0),
               child: Text(
-                "SUBMIT",
+                "Post",
                 style: TextStyle(
-                  fontSize: 14.0,
+                  fontSize: 17.0,
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
                 ),

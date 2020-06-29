@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import "package:uuid/uuid.dart";
+import 'package:wastepin/theme/custom_theme.dart';
 import '../main.dart';
 
 import 'package:image/image.dart' as ImageCoding;
@@ -75,6 +77,10 @@ class WastePinService {
     return downloadUrl;
   }
 
+  Future deleteWastePin(String id) async {
+    firestoreInstance.collection('wastepins').document(id).delete();
+  }
+
   Future<WastePin> addWastePin(
     WastePin pin,
   ) async {
@@ -92,17 +98,17 @@ class WastePinService {
     return createdPin;
   }
 
-  void updateWastePin(WastePin pin) {
-    // faking update to server and local
-    var inMemory = inMemoryList.firstWhere((element) => (element.id == pin.id),
-        orElse: () => null);
-    if (inMemory != null) {
-      inMemory.localFilePath = pin.localFilePath;
-      inMemory.location = pin.location;
-      inMemory.note = pin.note;
-      inMemory.remoteUrl = pin.remoteUrl;
-    }
-  }
+  // void updateWastePin(WastePin pin) {
+  //   // faking update to server and local
+  //   var inMemory = inMemoryList.firstWhere((element) => (element.id == pin.id),
+  //       orElse: () => null);
+  //   if (inMemory != null) {
+  //     inMemory.localFilePath = pin.localFilePath;
+  //     inMemory.location = pin.location;
+  //     inMemory.note = pin.note;
+  //     inMemory.remoteUrl = pin.remoteUrl;
+  //   }
+  // }
 }
 
 class WastePin {
@@ -113,6 +119,7 @@ class WastePin {
   String note;
   String localFilePath; // it could be asset too
   String remoteUrl;
+  DateTime photoTime;
   Location location;
 
   WastePin(
@@ -121,6 +128,7 @@ class WastePin {
       this.category,
       this.localFilePath,
       this.location,
+      this.photoTime,
       this.remoteUrl}) {
     if (this.id == null) {
       this.id = Uuid().v1(options: location?.toMap());
@@ -135,6 +143,9 @@ class WastePin {
         note: json["note"] == null ? null : json["note"],
         category: json["category"] == null ? null : json["category"],
         remoteUrl: json["remoteUrl"] == null ? null : json["remoteUrl"],
+        photoTime: json["photoTime"] == null
+            ? null
+            : (json["photoTime"] as Timestamp).toDate(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -143,6 +154,7 @@ class WastePin {
         "note": note == null ? null : note,
         "category": category == null ? null : category,
         "remoteUrl": remoteUrl == null ? null : remoteUrl,
+        "photoTime": photoTime == null ? null : photoTime,
       };
 
   @override
@@ -158,7 +170,7 @@ class Location {
 
   @override
   String toString() {
-    return "Geo(${longitude.toStringAsFixed(3)}, ${latitude.toStringAsFixed(3)});";
+    return "Location (${longitude.toStringAsFixed(3)}, ${latitude.toStringAsFixed(3)})";
   }
 
   Map<String, double> toMap() {

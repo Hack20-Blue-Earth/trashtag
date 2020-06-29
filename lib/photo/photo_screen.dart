@@ -99,19 +99,18 @@ class _WastePhotoState extends State<WastePhoto> {
   Future getFromCamera() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-        extractExif(pickedFile.path);
-        if (photoTime == null) {
-          photoTime = DateTime.now();
-        }
-        widget.pickedFileCallback(
-            pickedFile.path, true, photoTime, photoLocation);
-      });
+      _image = File(pickedFile.path);
+      await extractExif(pickedFile.path);
+      if (photoTime == null) {
+        photoTime = DateTime.now();
+      }
+      widget.pickedFileCallback(
+          pickedFile.path, true, photoTime, photoLocation);
+      setState(() {});
     }
   }
 
-  extractExif(String filePath) async {
+  Future extractExif(String filePath) async {
     Map<String, IfdTag> data =
         await readExifFromBytes(await new File(filePath).readAsBytes());
 
@@ -151,20 +150,17 @@ class _WastePhotoState extends State<WastePhoto> {
       photoLocation = Location(longitude, latitude);
       Fimber.i("location: $photoLocation");
     }
-    setState(() {});
-
     Fimber.i("Capture time: $photoTime - ${data["Image DateTime"].printable}");
   }
 
   Future getFromGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-        extractExif(pickedFile.path);
-        widget.pickedFileCallback(
-            pickedFile.path, false, photoTime, photoLocation);
-      });
+      _image = File(pickedFile.path);
+      await extractExif(pickedFile.path);
+      widget.pickedFileCallback(
+          pickedFile.path, false, photoTime, photoLocation);
+      setState(() {});
     }
   }
 

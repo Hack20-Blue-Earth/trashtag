@@ -26,7 +26,10 @@ class MapScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: MapView(),
+        child: MapView(
+          showSinglePin: showSinglePin,
+          wastePin: wastePin,
+        ),
       ),
     );
   }
@@ -67,8 +70,12 @@ class _MapViewState extends State<MapView> {
     // fetch objects
     Fimber.d("Fetching nearby WastePins");
     if (position != null) {
-      wastePinList =
-          await wastePinService.fetchNearby(Location.fromPosition(position));
+      if (widget.showSinglePin) {
+        wastePinList = [widget.wastePin];
+      } else {
+        wastePinList =
+            await wastePinService.fetchNearby(Location.fromPosition(position));
+      }
       Fimber.d("Fetched: ${wastePinList?.length} waste pins");
       setState(() {});
     }

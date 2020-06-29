@@ -7,14 +7,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-<<<<<<< HEAD
 import 'package:wastepin/issue_listing_detail_screen.dart';
 import 'package:wastepin/issue_listing_screen.dart';
-import 'package:wastepin/photo/photo_screen.dart';
-=======
-import 'package:wastepin/issue_screen.dart';
 import 'package:wastepin/loading_screen.dart';
->>>>>>> c85af7a2a0cee1fb935b72dc0eb40ac929092815
+import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/theme/custom_theme.dart';
 import '../add_waste_pin.dart';
 import '../data/wastepin.dart';
@@ -83,7 +79,7 @@ class _MapViewState extends State<MapView> {
     var addNewSnackbar = SnackBar(
         duration: Duration(seconds: 10),
         action: SnackBarAction(
-          textColor: colorAccent,
+          textColor: MyCustomTheme.colorAccent,
           label: "Add Here...",
           onPressed: () async {
             var wastePin = await Navigator.push(

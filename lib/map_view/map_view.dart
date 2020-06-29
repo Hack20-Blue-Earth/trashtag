@@ -103,36 +103,33 @@ class _MapViewState extends State<MapView> {
             position: e.location?.toLatLng(),
             onTap: () {
               showMaterialModalBottomSheet(
-  context: context,
-  enableDrag: true,
-  expand: true,
-  builder: (context, scrollController) =>   
-      SizedBox(
-        height: 100,
-              child: Column(
-          children: [
-           Text("Waste Pin: ${e?.location?.toString() ?? 'NA'}"),
-        
-            Text(
-                "Location and photo with notes, map and future comment section goes here"),
-            AspectRatio(
-              aspectRatio: 1.666,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  border: Border.all(
-                    color: Colors.blue,
+                context: context,
+                enableDrag: true,
+                expand: true,
+                builder: (context, scrollController) => SizedBox(
+                  height: 100,
+                  child: Column(
+                    children: [
+                      Text("Waste Pin: ${e?.location?.toString() ?? 'NA'}"),
+                      Text(
+                          "Location and photo with notes, map and future comment section goes here"),
+                      AspectRatio(
+                        aspectRatio: 1.666,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            border: Border.all(
+                              color: Colors.blue,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: WastePhoto(wastePin: e),
+                        ),
+                      ),
+                    ],
                   ),
-                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                child: WastePhoto(wastePin: e),
-              ),
-            ),
-          ],
-        
-    ),
-      ),
-);
+              );
               // Navigator.of(context).push(
               //   MaterialPageRoute(
               //     builder: (c) => WastePinDetail(e),
@@ -178,15 +175,13 @@ class _MapViewState extends State<MapView> {
 
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
-    setState(() {
+    // setState(() {
       _mapController = controller;
-    });
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    // _wastePins = Provider.of<List<WastePin>>(context, listen: true);
-    // _addMarker();
 
     return Scaffold(
       body: Center(
@@ -197,9 +192,7 @@ class _MapViewState extends State<MapView> {
                     child: GoogleMap(
                       markers: prepareMarkers(wastePinList),
                       onLongPress: (ln) => addNewWastePin(context, ln),
-onTap: (_){
-
-},
+                      onTap: (_) {},
                       initialCameraPosition: CameraPosition(
                         // target:                  LatLng(widget.position.latitude, widget.position.longitude),
                         target: wastePinList?.first?.location?.toLatLng() ??

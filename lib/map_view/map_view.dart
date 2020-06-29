@@ -6,7 +6,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:wastepin/photo/photo_screen.dart';
+import 'package:wastepin/issue_screen.dart';
+import 'package:wastepin/loading_screen.dart';
 import 'package:wastepin/theme/custom_theme.dart';
 import '../add_waste_pin.dart';
 import '../data/wastepin.dart';
@@ -16,6 +17,11 @@ import 'package:fimber/fimber.dart';
 import '../splash_screen.dart';
 
 class MapScreen extends StatelessWidget {
+
+  List<WastePin> _wastePinList;
+
+  MapScreen(this._wastePinList);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +76,7 @@ class _MapViewState extends State<MapView> {
     var addNewSnackbar = SnackBar(
         duration: Duration(seconds: 10),
         action: SnackBarAction(
+          textColor: colorAccent,
           label: "Add Here...",
           onPressed: () async {
             var wastePin = await Navigator.push(
@@ -243,7 +250,7 @@ class _MapViewState extends State<MapView> {
                 ));
               }),
             )
-          : SplashScreen(),
+          : LoadingScreen(),
     );
   }
 }
@@ -472,20 +479,35 @@ class MapViewListWastePin extends StatelessWidget {
                       SizedBox(
                         height: 20,
                       ),
-                      FlatButton(
-                        child: Text(
-                          "Picked Up Now",
-                          style: TextStyle(
-                            fontSize: 17,
-                          ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom:19.0,right: 25.0, left:10.0),
+                    child: RaisedButton(
+                    elevation: 0.0,
+                    color: colorAccentDark,
+                    shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(20.0),
+                    side: BorderSide(color: colorAccentDark)),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 14.0,
+                                    horizontal: 12.0),
+                                child: Text(
+                                  "Picked Up Now",
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+
+
+                          onPressed: () {},
                         ),
-                        color: MyCustomTheme.primaryColor,
-                        textColor: MyCustomTheme.backgroundColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        onPressed: () {},
-                      ),
+                  ),
                       SizedBox(
                         height: 20,
                       ),

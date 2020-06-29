@@ -40,8 +40,11 @@ class WastePinService {
   }
 
   Future<List<WastePin>> fetch() async {
-    // TODO connect to API and fetch
-    return inMemoryList;
+    Fimber.d("Loading data from Firestore.");
+    var snap = await firestoreInstance.collection('wastepins').getDocuments();
+    var list = snap.documents.map((e) => WastePin.fromJson(e.data)).toList();
+    Fimber.d("Loaded ${list.length} WastePins");
+    return list;
   }
 
   Future<List<WastePin>> fetchNearby(Location location) async {

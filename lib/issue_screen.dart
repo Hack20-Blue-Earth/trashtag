@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:wastepin/add_waste_pin.dart';
 import 'package:wastepin/issue_listing_screen.dart';
+import 'package:wastepin/map_view/map_view.dart';
 
 import 'data/wastepin.dart';
 import 'debug-main.dart';
@@ -24,6 +27,7 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
   final num MAP_TAB_INDEX = 1;
   num currentTabIndex = 0;
   List<WastePin> _wastePinList;
+  Position position;
 
   
 
@@ -39,8 +43,15 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
 
   loadData() async{
     //get all the nearby data on the basis of location
-    _wastePinList = await wastePinService.fetch();
-    setState(() {});
+    wastePinService.fetch().then((value) {
+
+      setState(() {
+        _wastePinList = value;
+      });
+    });
+    position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    //setState(() {});
   }
 
   @override
@@ -75,6 +86,13 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
               centerTitle: false,
             ),
             floatingActionButton: FloatingActionButton(onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (c) => AddWastePinScreen(Location(
+                      position.longitude, position.latitude)),
+                ),
+              );
 
             },backgroundColor: colorAccentDark,
             child: Icon(Icons.add, color: Colors.white,),
@@ -181,7 +199,7 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
                         children: <Widget>[
                           // pass the property id
                           IssueListingScreen(_controller, _wastePinList),
-                          Container(),
+                          MapScreen(_wastePinList),
                         ],
                       ),
                     ),

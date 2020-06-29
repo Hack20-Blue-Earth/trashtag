@@ -76,7 +76,7 @@ class IssueListingDetailScreen extends StatelessWidget {
                           ),
                         ),
                     imageUrl:
-                    'https://images.unsplash.com/photo-1532264523420-881a47db012d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9',
+                    _wastePin.remoteUrl,
                   ),
                 ),
 
@@ -168,7 +168,7 @@ class IssueListingDetailScreen extends StatelessWidget {
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width/2.3,
                       child: TextFormField(
-                        initialValue: "28th June 2020",
+                        initialValue: _wastePin.note,
                         style: TextStyle(
                           fontSize: 15.0,
                           color: colorPrimary,
@@ -195,7 +195,8 @@ class IssueListingDetailScreen extends StatelessWidget {
                 side: BorderSide(color: colorAccentDark)),
 
             onPressed: () {
-
+//               WastePinService.updateWastePin()
+// _wastePin.category
             },
             child: Padding(
               padding: EdgeInsets.symmetric(

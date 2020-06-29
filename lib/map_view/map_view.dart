@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:wastepin/issue_listing_detail_screen.dart';
+import 'package:wastepin/issue_listing_screen.dart';
 import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/theme/custom_theme.dart';
 import '../add_waste_pin.dart';
@@ -95,79 +98,79 @@ class _MapViewState extends State<MapView> {
     if (wastePinList == null) {
       return null;
     }
-        Fimber.d("wastePinList"+wastePinList.length.toString());
+    Fimber.d("wastePinList" + wastePinList.length.toString());
 
-    wastePinList=wastePinList
-        .where((element) => element.location != null).toList();
-                Fimber.d("wastePinList"+wastePinList.length.toString());
+    wastePinList =
+        wastePinList.where((element) => element.location != null).toList();
+    Fimber.d("wastePinList" + wastePinList.length.toString());
 
-    return 
-        wastePinList.fold<List<Marker>>([],
-          (list,e) => list..add(Marker(
-            markerId: MarkerId(e.id),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueOrange),
-            position: e.location?.toLatLng(),
-            onTap: () async {
-              // _panelController.open();
+    return wastePinList.fold<List<Marker>>(
+      [],
+      (list, e) => list
+        ..add(Marker(
+          markerId: MarkerId(e.id),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          position: e.location?.toLatLng(),
+          onTap: () async {
+            // _panelController.open();
 
-              // _swiperControllerBusy = true;
-              // await _swiperController.move(list.length-1,
-              //     animation: true);
-              // _swiperControllerBusy = false;
-  Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (c) => WastePinDetail(e),
-                  ),
-                );
-              // showMaterialModalBottomSheet(
-              //   context: context,
-              //   enableDrag: true,
-              //   expand: true,
-              //   builder: (context, scrollController) => SizedBox(
-              //     height: 100,
-              //     child: Column(
-              //       children: [
-              //         Text("Waste Pin: ${e?.location?.toString() ?? 'NA'}"),
-              //         Text(
-              //             "Location and photo with notes, map and future comment section goes here"),
-              //         AspectRatio(
-              //           aspectRatio: 1.666,
-              //           child: Container(
-              //             decoration: BoxDecoration(
-              //               color: Colors.black,
-              //               border: Border.all(
-              //                 color: Colors.blue,
-              //               ),
-              //               borderRadius: BorderRadius.circular(10.0),
-              //             ),
-              //             child: WastePhoto(wastePin: e),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // );
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (c) => WastePinDetail(e),
-              //   ),
-              // );
+            // _swiperControllerBusy = true;
+            // await _swiperController.move(list.length-1,
+            //     animation: true);
+            // _swiperControllerBusy = false;
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (c) => IssueListingDetailScreen(e),
+              ),
+            );
+            // showMaterialModalBottomSheet(
+            //   context: context,
+            //   enableDrag: true,
+            //   expand: true,
+            //   builder: (context, scrollController) => SizedBox(
+            //     height: 100,
+            //     child: Column(
+            //       children: [
+            //         Text("Waste Pin: ${e?.location?.toString() ?? 'NA'}"),
+            //         Text(
+            //             "Location and photo with notes, map and future comment section goes here"),
+            //         AspectRatio(
+            //           aspectRatio: 1.666,
+            //           child: Container(
+            //             decoration: BoxDecoration(
+            //               color: Colors.black,
+            //               border: Border.all(
+            //                 color: Colors.blue,
+            //               ),
+            //               borderRadius: BorderRadius.circular(10.0),
+            //             ),
+            //             child: WastePhoto(wastePin: e),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // );
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (c) => WastePinDetail(e),
+            //   ),
+            // );
+          },
+          infoWindow: InfoWindow(
+            title: e.category,
+            snippet: e.note,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (c) => IssueListingDetailScreen(e),
+                ),
+              );
             },
-            infoWindow: InfoWindow(
-              title: e.category,
-              snippet: e.note,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (c) => WastePinDetail(e),
-                  ),
-                );
-              },
-            ),
-          )),
-        )
-        .toSet();
+          ),
+        )),
+    ).toSet();
   }
 
   Completer<GoogleMapController> _controller = Completer();
@@ -201,7 +204,7 @@ class _MapViewState extends State<MapView> {
       body: isDataAvailable
           ? SlidingUpPanel(
               boxShadow: [],
-              maxHeight: MediaQuery.of(context).size.height *0.37,// 0.85,
+              maxHeight: MediaQuery.of(context).size.height * 0.37, // 0.85,
               minHeight: MediaQuery.of(context).size.height * 0.37,
               panelSnapping: true,
               controller: _panelController,
@@ -246,7 +249,6 @@ class _MapViewState extends State<MapView> {
                             color: Theme.of(context).primaryColor),
                       ),
                     ),
-                
                   ],
                 ));
               }),
@@ -268,7 +270,7 @@ class MapViewListWastePin extends StatelessWidget {
     var _wastePins = Provider.of<List<WastePin>>(context);
 
     return Container(
-      height: MediaQuery.of(context).size.height *0.37  ,// * 0.75,
+      height: MediaQuery.of(context).size.height * 0.37, // * 0.75,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
           color: MyCustomTheme.backgroundColor,
@@ -302,12 +304,13 @@ class MapViewListWastePin extends StatelessWidget {
               curve: Curves.bounceInOut,
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
-                  onTap: ()=>  Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (c) => WastePinDetail(_wastePins[index]),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (c) =>
+                          IssueListingDetailScreen(_wastePins[index]),
+                    ),
                   ),
-                ),
-                                  child: Container(
+                  child: Container(
                     padding: EdgeInsets.all(10),
                     child: Material(
                       elevation: 4,
@@ -322,10 +325,15 @@ class MapViewListWastePin extends StatelessWidget {
                             child: Stack(
                               fit: StackFit.expand,
                               children: <Widget>[
-                                Center(child: CircularProgressIndicator()),
-                                Image.network(
-                                  _wastePins[index].remoteUrl,
+                                CachedNetworkImage(
                                   fit: BoxFit.cover,
+                                  progressIndicatorBuilder:
+                                      (context, url, progress) => Center(
+                                    child: CircularProgressIndicator(
+                                      value: progress.progress,
+                                    ),
+                                  ),
+                                  imageUrl: _wastePins[index].remoteUrl,
                                 ),
                                 Positioned(
                                     bottom: 0,
@@ -478,7 +486,7 @@ class MapViewListWastePin extends StatelessWidget {
           //                       labelText: 'Lat:' +
           //                           _wastePins[_index]
           //                               .note
-                                        
+
           //                               ?.toString(),
           //                     ),
           //                   ),

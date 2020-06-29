@@ -115,6 +115,8 @@ class WastePinService {
 }
 
 class WastePin {
+  
+  static var categoryWildDump = "Wild Dump";
   static var categoryTrashOverflow = "Trash overflow";
 
   String id;

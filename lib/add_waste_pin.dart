@@ -206,6 +206,7 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
                 WastePin pin = WastePin(
                     location: pinLocation,
                     photoTime: photoTime,
+                    category: WastePin.categoryWildDump,
                     localFilePath: _photoFilePath,
                     note: _textEditingController.text.trim());
                 setState(() {

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:geolocator/geolocator.dart';
@@ -144,7 +145,7 @@ class WastePin {
         remoteUrl: json["remoteUrl"] == null ? null : json["remoteUrl"],
         photoTime: json["photoTime"] == null
             ? null
-            : DateTime.parse(json["photoTime"]),
+            : (json["photoTime"] as Timestamp).toDate(),
       );
 
   Map<String, dynamic> toJson() => {

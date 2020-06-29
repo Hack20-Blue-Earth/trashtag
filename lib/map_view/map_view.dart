@@ -17,10 +17,8 @@ import 'package:fimber/fimber.dart';
 import '../splash_screen.dart';
 
 class MapScreen extends StatelessWidget {
-
-  bool showSinglePin=false;
+  bool showSinglePin = false;
   WastePin wastePin;
-
 
   MapScreen({this.showSinglePin, this.wastePin});
 
@@ -35,10 +33,11 @@ class MapScreen extends StatelessWidget {
 }
 
 class MapView extends StatefulWidget {
-  bool showSinglePin=false;
+  bool showSinglePin = false;
   WastePin wastePin;
 
-  MapView({Key key, this.showSinglePin=false, this.wastePin}) : super(key: key);
+  MapView({Key key, this.showSinglePin = false, this.wastePin})
+      : super(key: key);
 
   @override
   _MapViewState createState() => _MapViewState();
@@ -68,13 +67,8 @@ class _MapViewState extends State<MapView> {
     // fetch objects
     Fimber.d("Fetching nearby WastePins");
     if (position != null) {
-
-      if(widget.showSinglePin) {
-        wastePinList =
-        await wastePinService.fetchNearby(Location.fromPosition(position));
-      }else{
-        wastePinList.add(widget.wastePin);
-      }
+      wastePinList =
+          await wastePinService.fetchNearby(Location.fromPosition(position));
       Fimber.d("Fetched: ${wastePinList?.length} waste pins");
       setState(() {});
     }
@@ -146,15 +140,14 @@ class _MapViewState extends State<MapView> {
       (list, e) => list
         ..add(Marker(
           markerId: MarkerId(e.id),
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueOrange),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
           position: e.location?.toLatLng(),
           onTap: () async {
             _panelController.open();
 
             _swiperControllerBusy = true;
-            await _swiperController.move(list.length-1,
-                animation: true);
+            await _swiperController.move(list.length - 1, animation: true);
             _swiperControllerBusy = false;
 
             // showMaterialModalBottomSheet(
@@ -240,57 +233,56 @@ class _MapViewState extends State<MapView> {
     return Scaffold(
       body: isDataAvailable
           ? SlidingUpPanel(
-        boxShadow: [],
-        maxHeight: MediaQuery.of(context).size.height * 0.85,
-        minHeight: MediaQuery.of(context).size.height * 0.37,
-        panelSnapping: true,
-        controller: _panelController,
-        color: Colors.transparent,
-        panel: Container(
-          child: Provider.value(
-            value: wastePinList,
-            child: MapViewListWastePin(
-                onIndexChanged: _onIndexChanged,
-                swiperController: _swiperController,
-                index: _index),
-          ),
-        ),
-        body: Builder(builder: (context) {
-          return Center(
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    child: GoogleMap(
-                      markers: prepareMarkers(wastePinList),
-                      onLongPress: (ln) => addNewWastePin(context, ln),
-                      onTap: (_) {},
-                      initialCameraPosition: CameraPosition(
-                        // target:                  LatLng(widget.position.latitude, widget.position.longitude),
-                        target: wastePinList?.first?.location?.toLatLng() ??
-                            LatLng(position?.latitude ?? 0,
-                                position?.longitude ?? 0),
-                        zoom: 17,
-                        // bearing: position?.heading ?? 0,
+              boxShadow: [],
+              maxHeight: MediaQuery.of(context).size.height * 0.85,
+              minHeight: MediaQuery.of(context).size.height * 0.37,
+              panelSnapping: true,
+              controller: _panelController,
+              color: Colors.transparent,
+              panel: Container(
+                child: Provider.value(
+                  value: wastePinList,
+                  child: MapViewListWastePin(
+                      onIndexChanged: _onIndexChanged,
+                      swiperController: _swiperController,
+                      index: _index),
+                ),
+              ),
+              body: Builder(builder: (context) {
+                return Center(
+                    child: Stack(
+                  children: <Widget>[
+                    Container(
+                      child: GoogleMap(
+                        markers: prepareMarkers(wastePinList),
+                        onLongPress: (ln) => addNewWastePin(context, ln),
+                        onTap: (_) {},
+                        initialCameraPosition: CameraPosition(
+                          // target:                  LatLng(widget.position.latitude, widget.position.longitude),
+                          target: wastePinList?.first?.location?.toLatLng() ??
+                              LatLng(position?.latitude ?? 0,
+                                  position?.longitude ?? 0),
+                          zoom: 17,
+                          // bearing: position?.heading ?? 0,
+                        ),
+                        mapType: MapType.normal,
+                        myLocationButtonEnabled: false,
+                        myLocationEnabled: true,
+                        onMapCreated: _onMapCreated,
+                        compassEnabled: false,
+                        zoomControlsEnabled: false,
                       ),
-                      mapType: MapType.normal,
-                      myLocationButtonEnabled: false,
-                      myLocationEnabled: true,
-                      onMapCreated: _onMapCreated,
-                      compassEnabled: false,
-                      zoomControlsEnabled: false,
                     ),
-                  ),
-                  Positioned.fill(
-                    child: Center(
-                      child: Icon(Icons.location_on,
-                          color: Theme.of(context).primaryColor),
+                    Positioned.fill(
+                      child: Center(
+                        child: Icon(Icons.location_on,
+                            color: Theme.of(context).primaryColor),
+                      ),
                     ),
-                  ),
-
-                ],
-              ));
-        }),
-      )
+                  ],
+                ));
+              }),
+            )
           : LoadingScreen(),
     );
   }
@@ -380,9 +372,7 @@ class MapViewListWastePin extends StatelessWidget {
                                               .withAlpha(150),
                                           child: Center(
                                             child: Text(
-                                              _wastePins[index]
-                                                  .note
-                                                  .toString(),
+                                              _wastePins[index].note.toString(),
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15,
@@ -452,17 +442,20 @@ class MapViewListWastePin extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(width:20),
-
+                          SizedBox(width: 20),
                           Material(
                             color: MyCustomTheme.primaryColor,
                             shape: StadiumBorder(),
                             child: Padding(
                               padding: const EdgeInsets.all(10),
-                              child: Icon(Icons.my_location, size: 40,color: Colors.white,),
+                              child: Icon(
+                                Icons.my_location,
+                                size: 40,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                          SizedBox(width:20),
+                          SizedBox(width: 20),
                           Expanded(
                             child: TextField(
                               enabled: false,
@@ -508,10 +501,7 @@ class MapViewListWastePin extends StatelessWidget {
                                         color: MyCustomTheme.colorPrimary)),
                                 border: OutlineInputBorder(),
                                 labelText:
-                                _wastePins[_index]
-                                    .photoTime
-
-                                    ?.toString(),
+                                    _wastePins[_index].photoTime?.toString(),
                               ),
                             ),
                           ),
@@ -521,7 +511,8 @@ class MapViewListWastePin extends StatelessWidget {
                         height: 20,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom:19.0,right: 10.0, left:10.0),
+                        padding: const EdgeInsets.only(
+                            bottom: 19.0, right: 10.0, left: 10.0),
                         child: RaisedButton(
                           elevation: 0.0,
                           color: colorAccentDark,
@@ -531,8 +522,7 @@ class MapViewListWastePin extends StatelessWidget {
                           child: Center(
                             child: Padding(
                               padding: EdgeInsets.symmetric(
-                                  vertical: 14.0,
-                                  horizontal: 12.0),
+                                  vertical: 14.0, horizontal: 12.0),
                               child: Text(
                                 "Picked Up Now",
                                 style: TextStyle(
@@ -543,9 +533,6 @@ class MapViewListWastePin extends StatelessWidget {
                               ),
                             ),
                           ),
-
-
-
                           onPressed: () {},
                         ),
                       ),

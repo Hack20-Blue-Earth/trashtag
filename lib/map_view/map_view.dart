@@ -95,8 +95,12 @@ class _MapViewState extends State<MapView> {
     if (wastePinList == null) {
       return null;
     }
+        Fimber.d("wastePinList"+wastePinList.length.toString());
+
     wastePinList=wastePinList
         .where((element) => element.location != null).toList();
+                Fimber.d("wastePinList"+wastePinList.length.toString());
+
     return 
         wastePinList.fold<List<Marker>>([],
           (list,e) => list..add(Marker(
@@ -105,13 +109,17 @@ class _MapViewState extends State<MapView> {
                 BitmapDescriptor.hueOrange),
             position: e.location?.toLatLng(),
             onTap: () async {
-              _panelController.open();
+              // _panelController.open();
 
-              _swiperControllerBusy = true;
-              await _swiperController.move(list.length-1,
-                  animation: true);
-              _swiperControllerBusy = false;
-
+              // _swiperControllerBusy = true;
+              // await _swiperController.move(list.length-1,
+              //     animation: true);
+              // _swiperControllerBusy = false;
+  Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (c) => WastePinDetail(e),
+                  ),
+                );
               // showMaterialModalBottomSheet(
               //   context: context,
               //   enableDrag: true,
@@ -193,7 +201,7 @@ class _MapViewState extends State<MapView> {
       body: isDataAvailable
           ? SlidingUpPanel(
               boxShadow: [],
-              maxHeight: MediaQuery.of(context).size.height * 0.85,
+              maxHeight: MediaQuery.of(context).size.height *0.37,// 0.85,
               minHeight: MediaQuery.of(context).size.height * 0.37,
               panelSnapping: true,
               controller: _panelController,
@@ -260,7 +268,7 @@ class MapViewListWastePin extends StatelessWidget {
     var _wastePins = Provider.of<List<WastePin>>(context);
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.75,
+      height: MediaQuery.of(context).size.height *0.37  ,// * 0.75,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
           color: MyCustomTheme.backgroundColor,
@@ -293,206 +301,214 @@ class MapViewListWastePin extends StatelessWidget {
               controller: swiperController,
               curve: Curves.bounceInOut,
               itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  padding: EdgeInsets.all(10),
-                  child: Material(
-                    elevation: 4,
-                    color: Colors.transparent,
-                    clipBehavior: Clip.antiAlias,
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Container(
-                        color: Colors.white,
-                        padding: const EdgeInsets.all(2),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(14.0),
-                          child: Stack(
-                            fit: StackFit.expand,
-                            children: <Widget>[
-                              Image.network(
-                                _wastePins[index].remoteUrl,
-                                fit: BoxFit.cover,
-                              ),
-                              Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: SizedBox(
-                                    height: 40,
-                                    child: Column(
-                                      children: <Widget>[
-                                        Container(
-                                          height: 2,
-                                          //#F8F8F8
-                                          color: Colors.white.withAlpha(150),
-                                        ),
-                                        Container(
-                                          height: 38,
-                                          //#3023B1
-                                          color: MyCustomTheme.primaryColor
-                                              .withAlpha(150),
-                                          child: Center(
-                                            child: Text(
-                                              _wastePins[index]
-                                                  .note
-                                                  .toString(),
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
+                return InkWell(
+                  onTap: ()=>  Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (c) => WastePinDetail(_wastePins[index]),
+                  ),
+                ),
+                                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    child: Material(
+                      elevation: 4,
+                      color: Colors.transparent,
+                      clipBehavior: Clip.antiAlias,
+                      borderRadius: BorderRadius.circular(16.0),
+                      child: Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.all(2),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(14.0),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: <Widget>[
+                                Center(child: CircularProgressIndicator()),
+                                Image.network(
+                                  _wastePins[index].remoteUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    child: SizedBox(
+                                      height: 40,
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            height: 2,
+                                            //#F8F8F8
+                                            color: Colors.white.withAlpha(150),
+                                          ),
+                                          Container(
+                                            height: 38,
+                                            //#3023B1
+                                            color: MyCustomTheme.primaryColor
+                                                .withAlpha(150),
+                                            child: Center(
+                                              child: Text(
+                                                _wastePins[index]
+                                                    .note
+                                                    .toString(),
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                            ],
-                          ),
-                        )),
+                                        ],
+                                      ),
+                                    )),
+                              ],
+                            ),
+                          )),
+                    ),
                   ),
                 );
               },
             ),
           ),
-          SizedBox(
-            height: 30,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: ValueListenableBuilder<int>(
-                valueListenable: index,
-                builder: (_, _index, ___) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Material(
-                        shape: StadiumBorder(),
-                        color: MyCustomTheme.colorAccentDark,
-                        child: Container(
-                          height: 3,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'Location:',
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.2,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: TextField(
-                              enabled: false,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: MyCustomTheme.colorPrimary)),
-                                border: OutlineInputBorder(),
-                                labelText: 'Lat: ' +
-                                    _wastePins[_index]
-                                        ?.location
-                                        ?.latitude
-                                        ?.toString()
-                                        .substring(0, 7),
-                              ),
-                            ),
-                          ),
-                                                    SizedBox(width:20),
+          // SizedBox(
+          //   height: 30,
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+          //   child: ValueListenableBuilder<int>(
+          //       valueListenable: index,
+          //       builder: (_, _index, ___) {
+          //         return Column(
+          //           crossAxisAlignment: CrossAxisAlignment.stretch,
+          //           children: <Widget>[
+          //             Material(
+          //               shape: StadiumBorder(),
+          //               color: MyCustomTheme.colorAccentDark,
+          //               child: Container(
+          //                 height: 3,
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               height: 10,
+          //             ),
+          //             Text(
+          //               'Location:',
+          //               style: TextStyle(
+          //                 fontSize: 15,
+          //                 height: 1.2,
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               height: 5,
+          //             ),
+          //             Row(
+          //               children: <Widget>[
+          //                 Expanded(
+          //                   child: TextField(
+          //                     enabled: false,
+          //                     decoration: InputDecoration(
+          //                       isDense: true,
+          //                       disabledBorder: OutlineInputBorder(
+          //                           borderSide: BorderSide(
+          //                               color: MyCustomTheme.colorPrimary)),
+          //                       border: OutlineInputBorder(),
+          //                       labelText: 'Lat: ' +
+          //                           _wastePins[_index]
+          //                               ?.location
+          //                               ?.latitude
+          //                               ?.toString()
+          //                               .substring(0, 7),
+          //                     ),
+          //                   ),
+          //                 ),
+          //                                           SizedBox(width:20),
 
-                          Material(
-                            color: MyCustomTheme.primaryColor,
-                            shape: StadiumBorder(),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Icon(Icons.my_location, size: 40,color: Colors.white,),
-                            ),
-                          ),
-                          SizedBox(width:20),
-                          Expanded(
-                            child: TextField(
-                              enabled: false,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: MyCustomTheme.colorPrimary)),
-                                border: OutlineInputBorder(),
-                                labelText: 'Lng: ' +
-                                    _wastePins[_index]
-                                        ?.location
-                                        ?.latitude
-                                        ?.toString()
-                                        .substring(0, 7),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        'Date Added:',
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.2,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: TextField(
-                              enabled: false,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: MyCustomTheme.colorPrimary)),
-                                border: OutlineInputBorder(),
-                                labelText: 'Lat:' +
-                                    _wastePins[_index]
-                                        .note
+          //                 Material(
+          //                   color: MyCustomTheme.primaryColor,
+          //                   shape: StadiumBorder(),
+          //                   child: Padding(
+          //                     padding: const EdgeInsets.all(10),
+          //                     child: Icon(Icons.my_location, size: 40,color: Colors.white,),
+          //                   ),
+          //                 ),
+          //                 SizedBox(width:20),
+          //                 Expanded(
+          //                   child: TextField(
+          //                     enabled: false,
+          //                     decoration: InputDecoration(
+          //                       isDense: true,
+          //                       disabledBorder: OutlineInputBorder(
+          //                           borderSide: BorderSide(
+          //                               color: MyCustomTheme.colorPrimary)),
+          //                       border: OutlineInputBorder(),
+          //                       labelText: 'Lng: ' +
+          //                           _wastePins[_index]
+          //                               ?.location
+          //                               ?.latitude
+          //                               ?.toString()
+          //                               .substring(0, 7),
+          //                     ),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //             SizedBox(
+          //               height: 20,
+          //             ),
+          //             Text(
+          //               'Date Added:',
+          //               style: TextStyle(
+          //                 fontSize: 15,
+          //                 height: 1.2,
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               height: 5,
+          //             ),
+          //             Row(
+          //               children: <Widget>[
+          //                 Expanded(
+          //                   child: TextField(
+          //                     enabled: false,
+          //                     decoration: InputDecoration(
+          //                       isDense: true,
+          //                       disabledBorder: OutlineInputBorder(
+          //                           borderSide: BorderSide(
+          //                               color: MyCustomTheme.colorPrimary)),
+          //                       border: OutlineInputBorder(),
+          //                       labelText: 'Lat:' +
+          //                           _wastePins[_index]
+          //                               .note
                                         
-                                        ?.toString(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      FlatButton(
-                        child: Text(
-                          "Picked Up Now",
-                          style: TextStyle(
-                            fontSize: 17,
-                          ),
-                        ),
-                        color: MyCustomTheme.primaryColor,
-                        textColor: MyCustomTheme.backgroundColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        onPressed: () {},
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  );
-                }),
-          ),
+          //                               ?.toString(),
+          //                     ),
+          //                   ),
+          //                 ),
+          //               ],
+          //             ),
+          //             SizedBox(
+          //               height: 20,
+          //             ),
+          //             FlatButton(
+          //               child: Text(
+          //                 "Picked Up Now",
+          //                 style: TextStyle(
+          //                   fontSize: 17,
+          //                 ),
+          //               ),
+          //               color: MyCustomTheme.primaryColor,
+          //               textColor: MyCustomTheme.backgroundColor,
+          //               shape: RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(10),
+          //               ),
+          //               onPressed: () {},
+          //             ),
+          //             SizedBox(
+          //               height: 20,
+          //             ),
+          //           ],
+          //         );
+          //       }),
+          // ),
         ],
       ),
     );

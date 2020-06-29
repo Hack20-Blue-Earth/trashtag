@@ -198,7 +198,7 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
                         controller: _controller,
                         children: <Widget>[
                           // pass the property id
-                          IssueListingScreen(_controller, _wastePinList),
+                          _wastePinList!=null?IssueListingScreen(_controller, _wastePinList):Center(child:CircularProgressIndicator()),
                           MapScreen(_wastePinList),
                         ],
                       ),

@@ -18,9 +18,11 @@ import '../splash_screen.dart';
 
 class MapScreen extends StatelessWidget {
 
-  List<WastePin> _wastePinList;
+  bool showSinglePin=false;
+  WastePin wastePin;
 
-  MapScreen(this._wastePinList);
+
+  MapScreen({this.showSinglePin, this.wastePin});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,10 @@ class MapScreen extends StatelessWidget {
 }
 
 class MapView extends StatefulWidget {
-  const MapView({Key key}) : super(key: key);
+  bool showSinglePin=false;
+  WastePin wastePin;
+
+  MapView({Key key, this.showSinglePin=false, this.wastePin}) : super(key: key);
 
   @override
   _MapViewState createState() => _MapViewState();
@@ -61,8 +66,13 @@ class _MapViewState extends State<MapView> {
     // fetch objects
     Fimber.d("Fetching nearby WastePins");
     if (position != null) {
-      wastePinList =
-          await wastePinService.fetchNearby(Location.fromPosition(position));
+
+      if(widget.showSinglePin) {
+        wastePinList =
+        await wastePinService.fetchNearby(Location.fromPosition(position));
+      }else{
+        wastePinList.add(widget.wastePin);
+      }
       Fimber.d("Fetched: ${wastePinList?.length} waste pins");
       setState(() {});
     }
@@ -183,7 +193,7 @@ class _MapViewState extends State<MapView> {
               bearing: 192.8334901395799,
               target: LatLng(wastePinList[index].location.latitude,
                   wastePinList[index].location.longitude),
-              zoom: 18)));
+              zoom: 30)));
     }
   }
 
@@ -344,7 +354,7 @@ class MapViewListWastePin extends StatelessWidget {
                                                   .toString(),
                                               style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 20,
+                                                fontSize: 15,
                                               ),
                                             ),
                                           ),
@@ -466,9 +476,9 @@ class MapViewListWastePin extends StatelessWidget {
                                     borderSide: BorderSide(
                                         color: MyCustomTheme.colorPrimary)),
                                 border: OutlineInputBorder(),
-                                labelText: 'Lat:' +
+                                labelText:
                                     _wastePins[_index]
-                                        .note
+                                        .photoTime
                                         
                                         ?.toString(),
                               ),
@@ -480,7 +490,7 @@ class MapViewListWastePin extends StatelessWidget {
                         height: 20,
                       ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom:19.0,right: 25.0, left:10.0),
+                    padding: const EdgeInsets.only(bottom:19.0,right: 10.0, left:10.0),
                     child: RaisedButton(
                     elevation: 0.0,
                     color: colorAccentDark,

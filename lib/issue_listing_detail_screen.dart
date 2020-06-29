@@ -2,6 +2,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:wastepin/map_view/map_view.dart';
 
 import 'data/wastepin.dart';
 import 'issue_screen.dart';
@@ -28,14 +29,24 @@ class IssueListingDetailScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical:16.0,horizontal: 10.0),
             child: InkWell(
-              child: Text(
-                "Delete",
-                style: TextStyle(
-                  fontSize: 18.0,
-                  color: colorAccentDark,
-                ),
-              ),
+//              child: Text(
+//                "Map",
+//                style: TextStyle(
+//                  fontSize: 18.0,
+//                  color: colorAccentDark,
+//                ),
+//              ),
+            child:Icon(
+              Icons.map, color: colorAccentDark,
+            ),
               onTap: (){
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (c) => MapView(showSinglePin: true, wastePin: _wastePin,),
+                  ),
+                );
 
               },
             ),
@@ -52,11 +63,11 @@ class IssueListingDetailScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-    floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    floatingActionButton: FloatingActionButton(onPressed: (){
-
-    }, backgroundColor: colorAccentDark, child: Icon(Icons.map,color:Colors.white),
-    elevation: 0.0,),
+//    floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+//    floatingActionButton: FloatingActionButton(onPressed: (){
+//
+//    }, backgroundColor: colorAccentDark, child: Icon(Icons.map,color:Colors.white),
+//    elevation: 0.0,),
     body: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -168,7 +179,7 @@ class IssueListingDetailScreen extends StatelessWidget {
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width/2.3,
                       child: TextFormField(
-                        initialValue: "28th June 2020",
+                        initialValue: "${_wastePin.photoTime}",
                         style: TextStyle(
                           fontSize: 15.0,
                           color: colorPrimary,
@@ -186,7 +197,7 @@ class IssueListingDetailScreen extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(bottom:19.0,right: 45.0, left:10.0),
+          padding: const EdgeInsets.only(bottom:19.0,right: 10.0, left:10.0),
           child: RaisedButton(
             elevation: 0.0,
             color: colorAccentDark,

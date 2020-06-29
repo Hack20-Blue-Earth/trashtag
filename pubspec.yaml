@@ -36,6 +36,7 @@ dependencies:
   geolocator: ^5.3.2
   cloud_firestore: ^0.13.7
   exif:
+  shared_preferences: ^0.5.7+3
   
   websafe_svg: ^1.1.0
     

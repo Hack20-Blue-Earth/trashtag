@@ -25,7 +25,7 @@ class IssueListingScreen extends StatelessWidget {
                 fontSize: 14.0,
                 color: colorPrimary,
               ),),
-              subtitle: Text("Today",
+              subtitle: Text("${_wastePin.elementAt(index).photoTime}",
                   style: TextStyle(
                   fontSize: 10.0,
                   color: colorGrey,

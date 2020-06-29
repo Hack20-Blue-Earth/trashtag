@@ -199,7 +199,7 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
             elevation: 0.0,
             color: MyCustomTheme.primaryColor,
             shape: RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(10.0),
+              borderRadius: new BorderRadius.circular(20.0),
             ),
             onPressed: () {
               if (_formKey.currentState.validate()) {
@@ -217,11 +217,18 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
                     _isLoading = false;
                   });
 
-                  Navigator.pop(context, value);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (ctx) => WastePinDetail(value)));
+//                  Navigator.pop(context, value);
+//                  Navigator.push(
+//                      context,
+//                      MaterialPageRoute(
+//                          builder: (ctx) => WastePinDetail(value)));
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => IssueScreen(),
+                    ),
+                        (route) => false,
+                  );
                 });
               }
             },

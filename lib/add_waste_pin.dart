@@ -6,6 +6,7 @@ import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:wastepin/issue_screen.dart';
 import 'package:wastepin/map_view/map_view.dart';
 import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/splash_screen.dart';
@@ -85,7 +86,23 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Add Waste Pin")),
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+//calender vie
+        leading: IconButton(icon:Icon(Icons.arrow_back_ios), color: colorAccentDark,
+          onPressed: () =>  Navigator.of(context).pop(),),
+        //property name
+        title: Text(
+          "Add waste Pin",
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 18.0,
+            color: colorPrimary,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: (_isLoading)
           ? Center(child: CircularProgressIndicator())
           : GestureDetector(
@@ -188,6 +205,7 @@ class _AddWastePinScreenState extends State<AddWastePinScreen> {
               if (_formKey.currentState.validate()) {
                 WastePin pin = WastePin(
                     location: pinLocation,
+                    photoTime: photoTime,
                     localFilePath: _photoFilePath,
                     note: _textEditingController.text.trim());
                 setState(() {

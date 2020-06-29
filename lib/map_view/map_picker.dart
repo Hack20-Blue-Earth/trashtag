@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:wastepin/issue_screen.dart';
 
 class MapPickerScreen extends StatelessWidget {
   final LatLng initialPosition;
@@ -10,7 +11,23 @@ class MapPickerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Pick location")),
+      appBar: AppBar(
+        elevation: 0.0,
+        backgroundColor: Colors.white,
+//calender vie
+        leading: IconButton(icon:Icon(Icons.arrow_back_ios), color: colorAccentDark,
+          onPressed: () =>  Navigator.of(context).pop(),),
+        //property name
+        title: Text(
+          "Pick Location",
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 18.0,
+            color: colorPrimary,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: MapPicker(
         initialPosition: initialPosition,
       ),
@@ -79,7 +96,12 @@ class _MapPickerState extends State<MapPicker> {
           padding: const EdgeInsets.all(8.0),
           child: FlatButton(
             color: Theme.of(context).dialogBackgroundColor,
-            child: Text("Pick This location"),
+            child: Text("Pick This location",
+            style: TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 18.0,
+    color: colorAccentDark,
+    ),),
             onPressed: () {
               Navigator.pop(context, _cameraPosition.target);
             },

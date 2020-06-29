@@ -42,8 +42,9 @@ class WasteBinApp extends StatelessWidget {
 
     return MaterialApp(
       title: "Waste Bin",
+      debugShowCheckedModeBanner: false,
       theme: config.themeData,
-      home: DebugApp(),
+      routes: MyRoutes.routes(),
     );
   }
 }

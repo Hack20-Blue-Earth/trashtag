@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:wastepin/routes.dart';
 import 'package:wastepin/theme/custom_theme.dart';
+import 'package:wastepin/utils/app_utils.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 
 class OnBoarding extends StatefulWidget {
@@ -123,7 +125,11 @@ class StartButton extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                onPressed: () {},
+                onPressed: () {
+
+                  AppUtils.NAVIGATOR_UTILS.navigatorPopAndPushNamed(context, MyRoutes.ISSUE_ROOT);
+
+                },
               )
             : null,
       ),

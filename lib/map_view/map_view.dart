@@ -47,6 +47,8 @@ class _MapViewState extends State<MapView> {
   Position position;
   ValueNotifier _index = ValueNotifier<int>(0);
 
+  Marker userSelectionMarker;
+
   @override
   void initState() {
     super.initState();
@@ -74,11 +76,25 @@ class _MapViewState extends State<MapView> {
     return position != null && wastePinList != null;
   }
 
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> _snackbarFeature;
+
   addNewWastePin(BuildContext context, LatLng newPinLocation) async {
+    _snackbarFeature?.close();
+
+    userSelectionMarker = Marker(
+        anchor: Offset.zero,
+        markerId: MarkerId("newLocation"),
+        icon: await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(size: Size.fromWidth(48)), 'assets/gps.png'),
+        position: newPinLocation);
+    setState(() {});
+
     var addNewSnackbar = SnackBar(
         duration: Duration(seconds: 10),
+        backgroundColor: MyCustomTheme.backgroundColor,
         action: SnackBarAction(
-          textColor: MyCustomTheme.colorAccent,
+          textColor: MyCustomTheme.primaryColor,
+          disabledTextColor: MyCustomTheme.neutralDarkColor,
           label: "Add Here...",
           onPressed: () async {
             var wastePin = await Navigator.push(
@@ -88,16 +104,24 @@ class _MapViewState extends State<MapView> {
                     newPinLocation.longitude, newPinLocation.latitude)),
               ),
             );
-            Fimber.i("Added pin: $wastePin");
+            Fimber.i("Adding pin: $wastePin");
           },
         ),
         content: ListTile(
-          title: Text("Add new Waste Pin"),
+          title: Text(
+            "Add new Waste Pin",
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
           leading: Icon(Icons.pin_drop),
         ));
 
-    await Scaffold.of(context).showSnackBar(addNewSnackbar).closed;
+    _snackbarFeature = await Scaffold.of(context).showSnackBar(addNewSnackbar);
+    await _snackbarFeature.closed;
+    _snackbarFeature = null;
     Fimber.i("Snackbar closed");
+    setState(() {
+      userSelectionMarker = null;
+    });
   }
 
   Set<Marker> prepareMarkers(List<WastePin> wastePinList) {
@@ -110,7 +134,7 @@ class _MapViewState extends State<MapView> {
         wastePinList.where((element) => element.location != null).toList();
     Fimber.d("wastePinList" + wastePinList.length.toString());
 
-    return wastePinList.fold<List<Marker>>(
+    var markerList = wastePinList.fold<List<Marker>>(
       [],
       (list, e) => list
         ..add(Marker(
@@ -177,6 +201,10 @@ class _MapViewState extends State<MapView> {
           ),
         )),
     ).toSet();
+    if (userSelectionMarker != null) {
+      markerList.add(userSelectionMarker);
+    }
+    return markerList;
   }
 
   Completer<GoogleMapController> _controller = Completer();
@@ -311,7 +339,7 @@ class MapViewListWastePin extends StatelessWidget {
     var _wastePins = Provider.of<List<WastePin>>(context);
 
     return Container(
-      height:220,// MediaQuery.of(context).size.height * 0.37, // * 0.75,
+      height: 220, // MediaQuery.of(context).size.height * 0.37, // * 0.75,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
           color: MyCustomTheme.colorWhite,
@@ -334,7 +362,7 @@ class MapViewListWastePin extends StatelessWidget {
           //   height: 22,
           // ),
           SizedBox(
-            height: 220,//175,
+            height: 220, //175,
             width: MediaQuery.of(context).size.width,
             child: Swiper(
               itemCount: _wastePins != null ? _wastePins.length ?? 0 : 0,

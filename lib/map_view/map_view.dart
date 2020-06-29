@@ -175,15 +175,13 @@ class _MapViewState extends State<MapView> {
 
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
-    setState(() {
+    // setState(() {
       _mapController = controller;
-    });
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
-    // _wastePins = Provider.of<List<WastePin>>(context, listen: true);
-    // _addMarker();
 
     return Scaffold(
       body: Builder(builder: (context) {

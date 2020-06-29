@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wastepin/routes.dart';
 import 'package:wastepin/theme/custom_theme.dart';
 import 'package:wastepin/utils/app_utils.dart';
@@ -16,11 +17,13 @@ class _SplashScreenState extends State<SplashScreen>
   Animation _curvedAnimation;
   AnimationController _controller;
   double _scale = 0;
+  int firstTime=0;
 
   @override
   void initState() {
     super.initState();
 
+    _getSharedPref();
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 300),
@@ -46,9 +49,18 @@ class _SplashScreenState extends State<SplashScreen>
     Future.delayed(Duration(milliseconds: 2000), () {
       _controller.reset();
 
+      (firstTime>0)?AppUtils.NAVIGATOR_UTILS.navigatorPopAndPushNamed(context, MyRoutes.ISSUE_ROOT):
       AppUtils.NAVIGATOR_UTILS.navigatorPopAndPushNamed(context, MyRoutes.ONBOARDING_ROOT);
 
     });
+  }
+
+  _getSharedPref() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    firstTime = (prefs.getInt('firstLaunch') ?? 0);
+
+    await prefs.setInt('firstLaunch', 1);
   }
 
   @override

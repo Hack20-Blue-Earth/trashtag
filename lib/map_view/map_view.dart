@@ -1,16 +1,13 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:wastepin/issue_listing_detail_screen.dart';
-import 'package:wastepin/issue_listing_screen.dart';
+import 'package:wastepin/issue_screen.dart';
 import 'package:wastepin/loading_screen.dart';
-import 'package:wastepin/photo/photo_screen.dart';
 import 'package:wastepin/theme/custom_theme.dart';
 import '../add_waste_pin.dart';
 import '../data/wastepin.dart';
@@ -20,9 +17,12 @@ import 'package:fimber/fimber.dart';
 import '../splash_screen.dart';
 
 class MapScreen extends StatelessWidget {
-  List<WastePin> _wastePinList;
 
-  MapScreen(this._wastePinList);
+  bool showSinglePin=false;
+  WastePin wastePin;
+
+
+  MapScreen({this.showSinglePin, this.wastePin});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,10 @@ class MapScreen extends StatelessWidget {
 }
 
 class MapView extends StatefulWidget {
-  const MapView({Key key}) : super(key: key);
+  bool showSinglePin=false;
+  WastePin wastePin;
+
+  MapView({Key key, this.showSinglePin=false, this.wastePin}) : super(key: key);
 
   @override
   _MapViewState createState() => _MapViewState();
@@ -65,8 +68,13 @@ class _MapViewState extends State<MapView> {
     // fetch objects
     Fimber.d("Fetching nearby WastePins");
     if (position != null) {
-      wastePinList =
-          await wastePinService.fetchNearby(Location.fromPosition(position));
+
+      if(widget.showSinglePin) {
+        wastePinList =
+        await wastePinService.fetchNearby(Location.fromPosition(position));
+      }else{
+        wastePinList.add(widget.wastePin);
+      }
       Fimber.d("Fetched: ${wastePinList?.length} waste pins");
       setState(() {});
     }
@@ -93,8 +101,7 @@ class _MapViewState extends State<MapView> {
         duration: Duration(seconds: 10),
         backgroundColor: MyCustomTheme.backgroundColor,
         action: SnackBarAction(
-          textColor: MyCustomTheme.primaryColor,
-          disabledTextColor: MyCustomTheme.neutralDarkColor,
+          textColor: colorAccent,
           label: "Add Here...",
           onPressed: () async {
             var wastePin = await Navigator.push(
@@ -139,21 +146,17 @@ class _MapViewState extends State<MapView> {
       (list, e) => list
         ..add(Marker(
           markerId: MarkerId(e.id),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueOrange),
           position: e.location?.toLatLng(),
           onTap: () async {
-            // _panelController.open();
+            _panelController.open();
 
-            // _swiperControllerBusy = true;
-            // await _swiperController.move(list.length-1,
-            //     animation: true);
-            // _swiperControllerBusy = false;
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (c) => IssueListingDetailScreen(e),
-              ),
-            );
+            _swiperControllerBusy = true;
+            await _swiperController.move(list.length-1,
+                animation: true);
+            _swiperControllerBusy = false;
+
             // showMaterialModalBottomSheet(
             //   context: context,
             //   enableDrag: true,
@@ -194,7 +197,7 @@ class _MapViewState extends State<MapView> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (c) => IssueListingDetailScreen(e),
+                  builder: (c) => WastePinDetail(e),
                 ),
               );
             },
@@ -221,7 +224,7 @@ class _MapViewState extends State<MapView> {
               bearing: 192.8334901395799,
               target: LatLng(wastePinList[index].location.latitude,
                   wastePinList[index].location.longitude),
-              zoom: 18)));
+              zoom: 30)));
     }
   }
 
@@ -236,92 +239,58 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isDataAvailable
-          ? //  SlidingUpPanel(
-          //     boxShadow: [],
-          //     maxHeight: MediaQuery.of(context).size.height * 0.37, // 0.85,
-          //     minHeight: MediaQuery.of(context).size.height * 0.37,
-          //     panelSnapping: true,
-          //     controller: _panelController,
-          //     color: Colors.transparent,
-          //     panel: Container(
-          //       child: Provider.value(
-          //         value: wastePinList,
-          //         child: MapViewListWastePin(
-          //             onIndexChanged: _onIndexChanged,
-          //             swiperController: _swiperController,
-          //             index: _index),
-          //       ),
-          //     ),
-          //     body: Center(
-          //           child: Stack(
-          //         children: <Widget>[
-          //           Container(
-          //             child: GoogleMap(
-          //               markers: prepareMarkers(wastePinList),
-          //               onLongPress: (ln) => addNewWastePin(context, ln),
-          //               onTap: (_) {},
-          //               initialCameraPosition: CameraPosition(
-          //                 // target:                  LatLng(widget.position.latitude, widget.position.longitude),
-          //                 target: wastePinList?.first?.location?.toLatLng() ??
-          //                     LatLng(position?.latitude ?? 0,
-          //                         position?.longitude ?? 0),
-          //                 zoom: 17,
-          //                 // bearing: position?.heading ?? 0,
-          //               ),
-          //               mapType: MapType.normal,
-          //               myLocationButtonEnabled: false,
-          //               myLocationEnabled: true,
-          //               onMapCreated: _onMapCreated,
-          //               compassEnabled: false,
-          //               zoomControlsEnabled: false,
-          //             ),
-          //           ),
-          //           Positioned.fill(
-          //             child: Center(
-          //               child: Icon(Icons.location_on,
-          //                   color: Theme.of(context).primaryColor),
-          //             ),
-          //           ),
-          //         ],
-          //       )),
-
-          //   )
-
-          Center(
-              child: Column(
-              children: <Widget>[
-                Expanded(
-                  child: GoogleMap(
-                    markers: prepareMarkers(wastePinList),
-                    onLongPress: (ln) => addNewWastePin(context, ln),
-                    onTap: (_) {},
-                    initialCameraPosition: CameraPosition(
-                      // target:                  LatLng(widget.position.latitude, widget.position.longitude),
-                      target: wastePinList?.first?.location?.toLatLng() ??
-                          LatLng(position?.latitude ?? 0,
-                              position?.longitude ?? 0),
-                      zoom: 17,
-                      // bearing: position?.heading ?? 0,
+          ? SlidingUpPanel(
+        boxShadow: [],
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+        minHeight: MediaQuery.of(context).size.height * 0.37,
+        panelSnapping: true,
+        controller: _panelController,
+        color: Colors.transparent,
+        panel: Container(
+          child: Provider.value(
+            value: wastePinList,
+            child: MapViewListWastePin(
+                onIndexChanged: _onIndexChanged,
+                swiperController: _swiperController,
+                index: _index),
+          ),
+        ),
+        body: Builder(builder: (context) {
+          return Center(
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    child: GoogleMap(
+                      markers: prepareMarkers(wastePinList),
+                      onLongPress: (ln) => addNewWastePin(context, ln),
+                      onTap: (_) {},
+                      initialCameraPosition: CameraPosition(
+                        // target:                  LatLng(widget.position.latitude, widget.position.longitude),
+                        target: wastePinList?.first?.location?.toLatLng() ??
+                            LatLng(position?.latitude ?? 0,
+                                position?.longitude ?? 0),
+                        zoom: 17,
+                        // bearing: position?.heading ?? 0,
+                      ),
+                      mapType: MapType.normal,
+                      myLocationButtonEnabled: false,
+                      myLocationEnabled: true,
+                      onMapCreated: _onMapCreated,
+                      compassEnabled: false,
+                      zoomControlsEnabled: false,
                     ),
-                    mapType: MapType.normal,
-                    myLocationButtonEnabled: false,
-                    myLocationEnabled: true,
-                    onMapCreated: _onMapCreated,
-                    compassEnabled: false,
-                    zoomControlsEnabled: false,
                   ),
-                ),
-                Container(
-                  child: Provider.value(
-                    value: wastePinList,
-                    child: MapViewListWastePin(
-                        onIndexChanged: _onIndexChanged,
-                        swiperController: _swiperController,
-                        index: _index),
+                  Positioned.fill(
+                    child: Center(
+                      child: Icon(Icons.location_on,
+                          color: Theme.of(context).primaryColor),
+                    ),
                   ),
-                ),
-              ],
-            ))
+
+                ],
+              ));
+        }),
+      )
           : LoadingScreen(),
     );
   }
@@ -339,30 +308,30 @@ class MapViewListWastePin extends StatelessWidget {
     var _wastePins = Provider.of<List<WastePin>>(context);
 
     return Container(
-      height: 220, // MediaQuery.of(context).size.height * 0.37, // * 0.75,
+      height: MediaQuery.of(context).size.height * 0.75,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-          color: MyCustomTheme.colorWhite,
+          color: MyCustomTheme.backgroundColor,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30), topRight: Radius.circular(30))),
       child: Column(
         children: <Widget>[
-          // SizedBox(
-          //   height: 22,
-          // ),
-          // Material(
-          //   shape: StadiumBorder(),
-          //   color: MyCustomTheme.colorGreyText,
-          //   child: Container(
-          //     height: 5,
-          //     width: 134,
-          //   ),
-          // ),
-          // SizedBox(
-          //   height: 22,
-          // ),
           SizedBox(
-            height: 220, //175,
+            height: 22,
+          ),
+          Material(
+            shape: StadiumBorder(),
+            color: MyCustomTheme.colorGreyText,
+            child: Container(
+              height: 5,
+              width: 134,
+            ),
+          ),
+          SizedBox(
+            height: 22,
+          ),
+          SizedBox(
+            height: 175,
             width: MediaQuery.of(context).size.width,
             child: Swiper(
               itemCount: _wastePins != null ? _wastePins.length ?? 0 : 0,
@@ -372,220 +341,221 @@ class MapViewListWastePin extends StatelessWidget {
               controller: swiperController,
               curve: Curves.bounceInOut,
               itemBuilder: (BuildContext context, int index) {
-                return InkWell(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (c) =>
-                          IssueListingDetailScreen(_wastePins[index]),
-                    ),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Material(
-                      elevation: 4,
-                      color: Colors.transparent,
-                      clipBehavior: Clip.antiAlias,
-                      borderRadius: BorderRadius.circular(16.0),
-                      child: Container(
-                          color: Colors.white,
-                          padding: const EdgeInsets.all(2),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(14.0),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: <Widget>[
-                                CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  progressIndicatorBuilder:
-                                      (context, url, progress) => Center(
-                                    child: CircularProgressIndicator(
-                                      value: progress.progress,
-                                    ),
-                                  ),
-                                  imageUrl: _wastePins[index].remoteUrl,
-                                ),
-                                Positioned(
-                                    bottom: 0,
-                                    left: 0,
-                                    right: 0,
-                                    child: SizedBox(
-                                      height: 40,
-                                      child: Column(
-                                        children: <Widget>[
-                                          Container(
-                                            height: 2,
-                                            //#F8F8F8
-                                            color: Colors.white.withAlpha(150),
-                                          ),
-                                          Container(
-                                            height: 38,
-                                            //#3023B1
-                                            color: MyCustomTheme.primaryColor
-                                                .withAlpha(150),
-                                            child: Center(
-                                              child: Text(
-                                                _wastePins[index]
-                                                    .note
-                                                    .toString(),
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
-                                                ),
+                return Container(
+                  padding: EdgeInsets.all(10),
+                  child: Material(
+                    elevation: 4,
+                    color: Colors.transparent,
+                    clipBehavior: Clip.antiAlias,
+                    borderRadius: BorderRadius.circular(16.0),
+                    child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(2),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14.0),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: <Widget>[
+                              Image.network(
+                                _wastePins[index].remoteUrl,
+                                fit: BoxFit.cover,
+                              ),
+                              Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: SizedBox(
+                                    height: 40,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          height: 2,
+                                          //#F8F8F8
+                                          color: Colors.white.withAlpha(150),
+                                        ),
+                                        Container(
+                                          height: 38,
+                                          //#3023B1
+                                          color: MyCustomTheme.primaryColor
+                                              .withAlpha(150),
+                                          child: Center(
+                                            child: Text(
+                                              _wastePins[index]
+                                                  .note
+                                                  .toString(),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
-                                    )),
-                              ],
-                            ),
-                          )),
-                    ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        )),
                   ),
                 );
               },
             ),
           ),
-          // SizedBox(
-          //   height: 30,
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 20),
-          //   child: ValueListenableBuilder<int>(
-          //       valueListenable: index,
-          //       builder: (_, _index, ___) {
-          //         return Column(
-          //           crossAxisAlignment: CrossAxisAlignment.stretch,
-          //           children: <Widget>[
-          //             Material(
-          //               shape: StadiumBorder(),
-          //               color: MyCustomTheme.colorAccentDark,
-          //               child: Container(
-          //                 height: 3,
-          //               ),
-          //             ),
-          //             SizedBox(
-          //               height: 10,
-          //             ),
-          //             Text(
-          //               'Location:',
-          //               style: TextStyle(
-          //                 fontSize: 15,
-          //                 height: 1.2,
-          //               ),
-          //             ),
-          //             SizedBox(
-          //               height: 5,
-          //             ),
-          //             Row(
-          //               children: <Widget>[
-          //                 Expanded(
-          //                   child: TextField(
-          //                     enabled: false,
-          //                     decoration: InputDecoration(
-          //                       isDense: true,
-          //                       disabledBorder: OutlineInputBorder(
-          //                           borderSide: BorderSide(
-          //                               color: MyCustomTheme.colorPrimary)),
-          //                       border: OutlineInputBorder(),
-          //                       labelText: 'Lat: ' +
-          //                           _wastePins[_index]
-          //                               ?.location
-          //                               ?.latitude
-          //                               ?.toString()
-          //                               .substring(0, 7),
-          //                     ),
-          //                   ),
-          //                 ),
-          //                                           SizedBox(width:20),
+          SizedBox(
+            height: 30,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ValueListenableBuilder<int>(
+                valueListenable: index,
+                builder: (_, _index, ___) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Material(
+                        shape: StadiumBorder(),
+                        color: MyCustomTheme.colorAccentDark,
+                        child: Container(
+                          height: 3,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'Location:',
+                        style: TextStyle(
+                          fontSize: 15,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextField(
+                              enabled: false,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: MyCustomTheme.colorPrimary)),
+                                border: OutlineInputBorder(),
+                                labelText: 'Lat: ' +
+                                    _wastePins[_index]
+                                        ?.location
+                                        ?.latitude
+                                        ?.toString()
+                                        .substring(0, 7),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width:20),
 
-          //                 Material(
-          //                   color: MyCustomTheme.primaryColor,
-          //                   shape: StadiumBorder(),
-          //                   child: Padding(
-          //                     padding: const EdgeInsets.all(10),
-          //                     child: Icon(Icons.my_location, size: 40,color: Colors.white,),
-          //                   ),
-          //                 ),
-          //                 SizedBox(width:20),
-          //                 Expanded(
-          //                   child: TextField(
-          //                     enabled: false,
-          //                     decoration: InputDecoration(
-          //                       isDense: true,
-          //                       disabledBorder: OutlineInputBorder(
-          //                           borderSide: BorderSide(
-          //                               color: MyCustomTheme.colorPrimary)),
-          //                       border: OutlineInputBorder(),
-          //                       labelText: 'Lng: ' +
-          //                           _wastePins[_index]
-          //                               ?.location
-          //                               ?.latitude
-          //                               ?.toString()
-          //                               .substring(0, 7),
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ],
-          //             ),
-          //             SizedBox(
-          //               height: 20,
-          //             ),
-          //             Text(
-          //               'Date Added:',
-          //               style: TextStyle(
-          //                 fontSize: 15,
-          //                 height: 1.2,
-          //               ),
-          //             ),
-          //             SizedBox(
-          //               height: 5,
-          //             ),
-          //             Row(
-          //               children: <Widget>[
-          //                 Expanded(
-          //                   child: TextField(
-          //                     enabled: false,
-          //                     decoration: InputDecoration(
-          //                       isDense: true,
-          //                       disabledBorder: OutlineInputBorder(
-          //                           borderSide: BorderSide(
-          //                               color: MyCustomTheme.colorPrimary)),
-          //                       border: OutlineInputBorder(),
-          //                       labelText: 'Lat:' +
-          //                           _wastePins[_index]
-          //                               .note
+                          Material(
+                            color: MyCustomTheme.primaryColor,
+                            shape: StadiumBorder(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Icon(Icons.my_location, size: 40,color: Colors.white,),
+                            ),
+                          ),
+                          SizedBox(width:20),
+                          Expanded(
+                            child: TextField(
+                              enabled: false,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: MyCustomTheme.colorPrimary)),
+                                border: OutlineInputBorder(),
+                                labelText: 'Lng: ' +
+                                    _wastePins[_index]
+                                        ?.location
+                                        ?.latitude
+                                        ?.toString()
+                                        .substring(0, 7),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'Date Added:',
+                        style: TextStyle(
+                          fontSize: 15,
+                          height: 1.2,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextField(
+                              enabled: false,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                disabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: MyCustomTheme.colorPrimary)),
+                                border: OutlineInputBorder(),
+                                labelText:
+                                _wastePins[_index]
+                                    .photoTime
 
-          //                               ?.toString(),
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ],
-          //             ),
-          //             SizedBox(
-          //               height: 20,
-          //             ),
-          //             FlatButton(
-          //               child: Text(
-          //                 "Picked Up Now",
-          //                 style: TextStyle(
-          //                   fontSize: 17,
-          //                 ),
-          //               ),
-          //               color: MyCustomTheme.primaryColor,
-          //               textColor: MyCustomTheme.backgroundColor,
-          //               shape: RoundedRectangleBorder(
-          //                 borderRadius: BorderRadius.circular(10),
-          //               ),
-          //               onPressed: () {},
-          //             ),
-          //             SizedBox(
-          //               height: 20,
-          //             ),
-          //           ],
-          //         );
-          //       }),
-          // ),
+                                    ?.toString(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom:19.0,right: 10.0, left:10.0),
+                        child: RaisedButton(
+                          elevation: 0.0,
+                          color: colorAccentDark,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(20.0),
+                              side: BorderSide(color: colorAccentDark)),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 14.0,
+                                  horizontal: 12.0),
+                              child: Text(
+                                "Picked Up Now",
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+
+
+
+                          onPressed: () {},
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  );
+                }),
+          ),
         ],
       ),
     );

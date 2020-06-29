@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:wastepin/add_waste_pin.dart';
 import 'package:wastepin/issue_listing_screen.dart';
+import 'package:wastepin/loading_screen.dart';
 import 'package:wastepin/map_view/map_view.dart';
 
 import 'data/wastepin.dart';
@@ -29,7 +30,6 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
   List<WastePin> _wastePinList;
   Position position;
 
-  
 
   @override
   Future<void> initState() {
@@ -81,11 +81,11 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
                   fontWeight: FontWeight.bold,
                   fontSize: 20.0,
                   color: colorPrimary,
-                  ),
+                ),
               ),
               centerTitle: false,
             ),
-            floatingActionButton:currentTabIndex==0? FloatingActionButton(onPressed: (){
+            floatingActionButton: (currentTabIndex!=LISTING_TAB_INDEX)?null:FloatingActionButton(onPressed: (){
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -95,9 +95,9 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
               );
 
             },backgroundColor: colorAccentDark,
-            child: Icon(Icons.add, color: Colors.white,),
-            ):null,
-            body: Container(
+              child: Icon(Icons.add, color: Colors.white,),
+            ),
+            body: (_wastePinList==null)?LoadingScreen():Container(
               color: Colors.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -149,8 +149,8 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
                                     BoxShadow(color:  colorAccent, spreadRadius: 1.0, blurRadius: 1.0)
                                   ] ,borderRadius: BorderRadius.circular(10.0))
                                       : BoxDecoration(
-                                      color: Colors.transparent,
-                                      ),
+                                    color: Colors.transparent,
+                                  ),
                                   child: Text(
                                     "Listing",
                                     style: TextStyle(
@@ -178,10 +178,10 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
                                   child: Text(
                                     "Map",
                                     style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14.0,
-                                    color: colorPrimary,
-                                  ),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14.0,
+                                      color: colorPrimary,
+                                    ),
                                   ),
                                 ))
                           ],
@@ -199,7 +199,7 @@ class _IssueScreenState extends State<IssueScreen> with SingleTickerProviderStat
                         children: <Widget>[
                           // pass the property id
                           IssueListingScreen(_controller, _wastePinList),
-                          MapScreen(_wastePinList),
+                          MapScreen(),
                         ],
                       ),
                     ),

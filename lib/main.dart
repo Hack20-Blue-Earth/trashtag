@@ -12,6 +12,7 @@ import 'splash_screen.dart';
 import 'data/wastepin.dart';
 import 'debug-main.dart';
 import 'map_view/map_view.dart';
+import 'theme/custom_theme.dart';
 
 final firestoreInstance = Firestore.instance;
 
@@ -25,6 +26,7 @@ Future<void> main() async {
 
   var configuredApp = AppConfig(
     child: WasteBinApp(),
+    themeData: myCustomTheme,
   );
 
   runZoned<Future<Null>>(() async {

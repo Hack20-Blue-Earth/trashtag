@@ -158,7 +158,7 @@ class Location {
 
   @override
   String toString() {
-    return "Geo(${longitude.toStringAsFixed(3)}, ${latitude.toStringAsFixed(3)});";
+    return "Location (${longitude.toStringAsFixed(3)}, ${latitude.toStringAsFixed(3)})";
   }
 
   Map<String, double> toMap() {

@@ -184,58 +184,54 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: Builder(
-        builder: (context) {
-          return Center(
-            child: isDataAvailable
-                ? Stack(
-                    children: <Widget>[
-                      Container(
-                        child: GoogleMap(
-                          markers: prepareMarkers(wastePinList),
-                          onLongPress: (ln) => addNewWastePin(context, ln),
-onTap: (_){
-
-},
-                          initialCameraPosition: CameraPosition(
-                            // target:                  LatLng(widget.position.latitude, widget.position.longitude),
-                            target: wastePinList?.first?.location?.toLatLng() ??
-                                LatLng(position?.latitude ?? 0,
-                                    position?.longitude ?? 0),
-                            zoom: 17,
-                            // bearing: position?.heading ?? 0,
-                          ),
-                          mapType: MapType.normal,
-                          myLocationButtonEnabled: false,
-                          myLocationEnabled: true,
-                          onMapCreated: _onMapCreated,
-                          // onCameraMove: _onCameraMove,
-                          zoomGesturesEnabled: true,
-                          compassEnabled: false,
+      body: Builder(builder: (context) {
+        return Center(
+          child: isDataAvailable
+              ? Stack(
+                  children: <Widget>[
+                    Container(
+                      child: GoogleMap(
+                        markers: prepareMarkers(wastePinList),
+                        onLongPress: (ln) => addNewWastePin(context, ln),
+                        onTap: (_) {},
+                        initialCameraPosition: CameraPosition(
+                          // target:                  LatLng(widget.position.latitude, widget.position.longitude),
+                          target: wastePinList?.first?.location?.toLatLng() ??
+                              LatLng(position?.latitude ?? 0,
+                                  position?.longitude ?? 0),
+                          zoom: 17,
+                          // bearing: position?.heading ?? 0,
+                        ),
+                        mapType: MapType.normal,
+                        myLocationButtonEnabled: false,
+                        myLocationEnabled: true,
+                        onMapCreated: _onMapCreated,
+                        // onCameraMove: _onCameraMove,
+                        zoomGesturesEnabled: true,
+                        compassEnabled: false,
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Center(
+                        child: Icon(Icons.location_on,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      child: Provider.value(
+                        value: wastePinList,
+                        child: MapViewListWastePin(
+                          onIndexChanged: _onIndexChanged,
+                          swiperController: _swiperController,
                         ),
                       ),
-                      Positioned.fill(
-                        child: Center(
-                          child: Icon(Icons.location_on,
-                              color: Theme.of(context).primaryColor),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        child: Provider.value(
-                          value: wastePinList,
-                          child: MapViewListWastePin(
-                            onIndexChanged: _onIndexChanged,
-                            swiperController: _swiperController,
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                : SplashScreen(),
-          );
-        }
-      ),
+                    )
+                  ],
+                )
+              : SplashScreen(),
+        );
+      }),
     );
   }
 }
